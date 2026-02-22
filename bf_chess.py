@@ -6,7 +6,7 @@ Board at BOARD_START with stride 1 (compact layout).
 from bf_memory import (
     BOARD_START, INITIAL_BOARD, SIDE_TO_MOVE, CASTLING,
     EP_FILE, WHITE_KING_POS, BLACK_KING_POS, HALFMOVE, FULLMOVE,
-    TEMP, INPUT_BUF, INPUT_LEN, SCRATCH, SCRATCH2,
+    TEMP, INPUT_BUF, INPUT_LEN,
     MG_T1, MG_T2, MG_T3, MG_T4, MG_T5, MG_T6,
     EMPTY, WHITE_KING, BLACK_KING,
 )
@@ -60,6 +60,7 @@ def parse_and_apply_moves(e):
     """
     pos = TEMP + 0       # 0 - position in buffer
     cont = TEMP + 1      # 1 - continue flag
+    skip = TEMP + 2      # 2 - skip flag (set when space encountered)
     from_sq = TEMP + 5   # 5
     to_sq = TEMP + 6     # 6
     piece = TEMP + 7     # 7
@@ -85,7 +86,7 @@ def parse_and_apply_moves(e):
     e.clear(tf)
     e.clear(tr_cell)
     e.clear(promo)
-    for i in range(124):
+    for i in range(128):
         compare_eq(e, pos, i, tmp1, tmp2)
         e.move_to(tmp1)
         e.emit('[')
@@ -105,15 +106,20 @@ def parse_and_apply_moves(e):
     if_zero(e, tmp1, stop_if_zero, tmp2)
 
     # Check if ff == space (32) -> skip, advance pos
+    e.clear(skip)
     e.copy_to(ff, tmp1, tmp2)
     e.dec(tmp1, 32)
     def handle_space(e):
         e.inc(pos)
+        e.set_cell(skip, 1)
     if_zero(e, tmp1, handle_space, tmp2)
 
-    # Process move if cont still set
+    # Process move if cont still set AND skip==0
     e.copy_to(cont, tmp1, tmp2)
     e.move_to(tmp1)
+    e.emit('[')
+    compare_eq(e, skip, 0, tmp2, tmp3)
+    e.move_to(tmp2)
     e.emit('[')
 
     # Convert chars to coordinates
@@ -207,12 +213,16 @@ def parse_and_apply_moves(e):
         e.inc(pos)
     if_zero(e, tmp1, skip_promo_n, tmp2)
 
+    e.clear(tmp2)
+    e.move_to(tmp2)
+    e.emit(']')  # end skip==0 check
+
     e.clear(tmp1)
     e.move_to(tmp1)
-    e.emit(']')
+    e.emit(']')  # end cont check
 
     e.move_to(cont)
-    e.emit(']')
+    e.emit(']')  # end main loop
 
 
 def parse_position_command(e):
