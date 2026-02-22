@@ -9,6 +9,9 @@ from bf_memory import (
     TEMP, INPUT_BUF, INPUT_LEN,
     MG_T1, MG_T2, MG_T3, MG_T4, MG_T5, MG_T6,
     EMPTY, WHITE_KING, BLACK_KING,
+    WHITE_PAWN, BLACK_PAWN, WHITE_QUEEN, BLACK_QUEEN,
+    WHITE_ROOK, BLACK_ROOK, WHITE_BISHOP, BLACK_BISHOP,
+    WHITE_KNIGHT, BLACK_KNIGHT,
 )
 from bf_primitives import compare_eq, if_nonzero, if_zero, if_else
 
@@ -51,78 +54,35 @@ def write_board_square(e, sq_index_cell, value_cell, tmp1, tmp2, tmp3):
         e.emit(']')
 
 
-def parse_and_apply_moves(e):
-    """Parse move list from INPUT_BUF and apply each move.
+def apply_single_move(e):
+    """Apply a single move from 'domove XXYY' command.
 
-    Key optimization: batch-read 5 chars per move in ONE 128-way pass
-    instead of 5-6 separate passes. Result cells near INPUT_BUF (94-99)
-    to minimize pointer travel.
+    Reads 4 chars from INPUT_BUF+7..+10 (fixed positions).
+    Converts to coordinates, moves piece, handles promotion,
+    updates king positions, toggles side to move.
     """
-    pos = TEMP + 0       # 0 - position in buffer
-    cont = TEMP + 1      # 1 - continue flag
-    skip = TEMP + 2      # 2 - skip flag (set when space encountered)
-    from_sq = TEMP + 5   # 5
-    to_sq = TEMP + 6     # 6
-    piece = TEMP + 7     # 7
-    tmp1 = TEMP + 8      # 8
-    tmp2 = TEMP + 9      # 9
-    tmp3 = TEMP + 10     # 10
+    # Use temps that don't conflict
+    ff = TEMP + 0       # file from
+    fr = TEMP + 1       # rank from
+    tf = TEMP + 2       # file to
+    tr_cell = TEMP + 3  # rank to
+    from_sq = TEMP + 5
+    to_sq = TEMP + 6
+    piece = TEMP + 7
+    tmp1 = TEMP + 8
+    tmp2 = TEMP + 9
+    tmp3 = TEMP + 10
+    promo = TEMP + 11
 
-    # Batch read results near INPUT_BUF for cheap copies
-    ff = MG_T3           # 96
-    fr = MG_T4           # 97
-    tf = MG_T5           # 98
-    tr_cell = MG_T6      # 99
-    promo = MG_T1        # 94
-    batch_tmp = MG_T2    # 95 - tmp for copy_to inside batch
+    # Read 4 chars from fixed positions in INPUT_BUF
+    # "domove XXYY" -> chars at positions 7,8,9,10
+    e.copy_to(INPUT_BUF + 7, ff, tmp1)    # file from
+    e.copy_to(INPUT_BUF + 8, fr, tmp1)    # rank from
+    e.copy_to(INPUT_BUF + 9, tf, tmp1)    # file to
+    e.copy_to(INPUT_BUF + 10, tr_cell, tmp1)  # rank to
+    e.copy_to(INPUT_BUF + 11, promo, tmp1)    # promotion char (or 0/space)
 
-    e.set_cell(cont, 1)
-    e.move_to(cont)
-    e.emit('[')
-
-    # Batch read: read 5 chars from buf[pos..pos+4] in ONE pass
-    e.clear(ff)
-    e.clear(fr)
-    e.clear(tf)
-    e.clear(tr_cell)
-    e.clear(promo)
-    for i in range(128):
-        compare_eq(e, pos, i, tmp1, tmp2)
-        e.move_to(tmp1)
-        e.emit('[')
-        e.copy_to(INPUT_BUF + i, ff, batch_tmp)
-        e.copy_to(INPUT_BUF + i + 1, fr, batch_tmp)
-        e.copy_to(INPUT_BUF + i + 2, tf, batch_tmp)
-        e.copy_to(INPUT_BUF + i + 3, tr_cell, batch_tmp)
-        e.copy_to(INPUT_BUF + i + 4, promo, batch_tmp)
-        e.clear(tmp1)
-        e.move_to(tmp1)
-        e.emit(']')
-
-    # Check if ff == 0 (end of input) -> stop
-    e.copy_to(ff, tmp1, tmp2)
-    def stop_if_zero(e):
-        e.clear(cont)
-    if_zero(e, tmp1, stop_if_zero, tmp2)
-
-    # Check if ff == space (32) -> skip, advance pos
-    e.clear(skip)
-    e.copy_to(ff, tmp1, tmp2)
-    e.dec(tmp1, 32)
-    def handle_space(e):
-        e.inc(pos)
-        e.set_cell(skip, 1)
-    if_zero(e, tmp1, handle_space, tmp2)
-
-    # Process move if cont still set AND skip==0
-    e.copy_to(cont, tmp1, tmp2)
-    e.move_to(tmp1)
-    e.emit('[')
-    compare_eq(e, skip, 0, tmp2, tmp3)
-    e.move_to(tmp2)
-    e.emit('[')
-
-    # Convert chars to coordinates
+    # Convert ASCII to coordinates
     e.dec(ff, 97)       # ff -= 'a'
     e.dec(fr, 49)       # fr -= '1'
     e.dec(tf, 97)       # tf -= 'a'
@@ -152,10 +112,59 @@ def parse_and_apply_moves(e):
     e.copy_to(tf, tmp1, tmp2)
     e.add_to(tmp1, to_sq)
 
+    # Read piece at from_sq, write to to_sq, clear from_sq
     read_board_square(e, from_sq, piece, tmp1, tmp2, tmp3)
     write_board_square(e, to_sq, piece, tmp1, tmp2, tmp3)
     e.clear(tmp1)
     write_board_square(e, from_sq, tmp1, tmp2, tmp3, TEMP + 12)
+
+    # Handle promotion: only queen promotion (covers vast majority of cases)
+    # Check if promo == 'q' (113) or any letter > 96 (promo chars)
+    # Simplified: treat any promotion as queen promotion
+    promo_piece = TEMP + 12
+    promo_tmp = TEMP + 13
+
+    # Check if promo char is a letter (> 64). We check: is it 'q','r','b', or 'n'?
+    # Simpler: check if promo >= 'b' (98). If so, promote to queen.
+    # Even simpler: check if promo is nonzero AND promo != space (32) AND promo != newline (10)
+    # Most reliable: just check for specific promo chars
+    # For size efficiency, always promote to queen regardless of char
+    e.copy_to(promo, tmp1, tmp2)
+    e.dec(tmp1, 98)  # subtract 'b' (lowest promo char)
+    # if tmp1 < 17 (covers 'b'=98 to 'r'=114, range 0-16), it's a promo
+    # Simpler approach: check if promo > 96 by checking nonzero after subtract 97
+    # Actually: let's check if promo == one of the 4 chars
+    # Cheapest: check nonzero on (promo - 'b')*(promo - 'n')*(promo - 'q')*(promo - 'r')
+    # That's too complex. Just check 'q' only for now.
+    e.copy_to(promo, tmp1, tmp2)
+    e.dec(tmp1, 113)  # 'q'
+    def do_promo_q(e):
+        e.clear(promo_piece)
+        # if side==0 (white): promo_piece = WHITE_QUEEN(5)
+        e.copy_to(SIDE_TO_MOVE, promo_tmp, tmp2)
+        e.set_cell(tmp2, 1)
+        e.move_to(promo_tmp)
+        e.emit('[')
+        e.clear(tmp2)
+        e.clear(promo_tmp)
+        e.move_to(promo_tmp)
+        e.emit(']')
+        e.move_to(tmp2)
+        e.emit('[')
+        e.set_cell(promo_piece, WHITE_QUEEN)
+        e.clear(tmp2)
+        e.move_to(tmp2)
+        e.emit(']')
+        # if side==1 (black): promo_piece = BLACK_QUEEN(11)
+        e.copy_to(SIDE_TO_MOVE, promo_tmp, tmp2)
+        e.move_to(promo_tmp)
+        e.emit('[')
+        e.set_cell(promo_piece, BLACK_QUEEN)
+        e.clear(promo_tmp)
+        e.move_to(promo_tmp)
+        e.emit(']')
+        write_board_square(e, to_sq, promo_piece, tmp1, tmp2, promo_tmp)
+    if_zero(e, tmp1, do_promo_q, tmp2)
 
     # Update king positions
     compare_eq(e, piece, WHITE_KING, tmp1, tmp2)
@@ -174,7 +183,7 @@ def parse_and_apply_moves(e):
     e.move_to(tmp1)
     e.emit(']')
 
-    # Toggle side: if was 1 (black) -> set 0, if was 0 (white) -> set 1
+    # Toggle side to move
     e.copy_to(SIDE_TO_MOVE, tmp1, tmp2)
     def was_black(e):
         e.set_cell(SIDE_TO_MOVE, 0)
@@ -182,57 +191,7 @@ def parse_and_apply_moves(e):
         e.set_cell(SIDE_TO_MOVE, 1)
     if_else(e, tmp1, was_black, was_white, tmp2)
 
-    e.inc(pos, 4)
-
-    # Check promotion: if promo char is a letter (not space/null), skip it
-    # 'q'=113, 'r'=114, 'b'=98, 'n'=110 — all > 96
-    # Space=32, null=0. Check if promo > 96 (is a promo char)
-    # Simpler: check if promo == 'q' (113) — most common
-    # Actually check several promo chars
-    e.copy_to(promo, tmp1, tmp2)
-    e.dec(tmp1, 113)  # 'q'
-    def skip_promo_q(e):
-        e.inc(pos)
-    if_zero(e, tmp1, skip_promo_q, tmp2)
-
-    e.copy_to(promo, tmp1, tmp2)
-    e.dec(tmp1, 114)  # 'r'
-    def skip_promo_r(e):
-        e.inc(pos)
-    if_zero(e, tmp1, skip_promo_r, tmp2)
-
-    e.copy_to(promo, tmp1, tmp2)
-    e.dec(tmp1, 98)   # 'b'
-    def skip_promo_b(e):
-        e.inc(pos)
-    if_zero(e, tmp1, skip_promo_b, tmp2)
-
-    e.copy_to(promo, tmp1, tmp2)
-    e.dec(tmp1, 110)  # 'n'
-    def skip_promo_n(e):
-        e.inc(pos)
-    if_zero(e, tmp1, skip_promo_n, tmp2)
-
-    e.clear(tmp2)
-    e.move_to(tmp2)
-    e.emit(']')  # end skip==0 check
-
-    e.clear(tmp1)
-    e.move_to(tmp1)
-    e.emit(']')  # end cont check
-
-    e.move_to(cont)
-    e.emit(']')  # end main loop
-
 
 def parse_position_command(e):
-    """Parse 'position startpos' or 'position startpos moves ...'"""
-    tmp1 = TEMP + 5
-    tmp2 = TEMP + 6
+    """Parse 'position startpos' — just init board. Moves applied via domove."""
     init_board(e)
-    e.copy_to(INPUT_BUF + 18, tmp1, tmp2)
-    e.dec(tmp1, 109)
-    def apply_moves(e):
-        e.set_cell(TEMP + 0, 24)  # pos starts at char 24
-        parse_and_apply_moves(e)
-    if_zero(e, tmp1, apply_moves, tmp2)

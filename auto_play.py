@@ -124,7 +124,7 @@ def get_white_move(board, moves, move_num):
 
 
 def main():
-    max_moves = 10  # 128-byte buffer supports ~10 full moves
+    max_moves = 80  # domove protocol removes buffer constraint
 
     proc = subprocess.Popen(
         ['./bfi', 'chess.bf'],
@@ -159,6 +159,9 @@ def main():
     read_until('readyok')
     print("Engine ready.\n")
 
+    # Init board once via domove protocol
+    send('position startpos')
+
     board = [row[:] for row in INITIAL_BOARD]
     moves = []
     move_num = 1
@@ -179,9 +182,10 @@ def main():
         apply_move(board, white_move)
         print(f"Move {move_num}. White: {white_move}")
 
+        # Send white's move via domove
+        send(f'domove {white_move}')
+
         # Engine (black) move
-        pos_cmd = "position startpos moves " + " ".join(moves)
-        send(pos_cmd)
         send('go')
         start = time.time()
         lines = read_until('bestmove', timeout=120)
@@ -199,6 +203,8 @@ def main():
             print_board(board)
             break
 
+        # Apply engine's move via domove
+        send(f'domove {engine_move}')
         moves.append(engine_move)
         apply_move(board, engine_move)
         print(f"         Black: {engine_move}  ({elapsed:.1f}s)")

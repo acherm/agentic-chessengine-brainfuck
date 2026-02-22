@@ -92,6 +92,9 @@ def main():
     send('isready')
     read_until('readyok')
 
+    # Init board once via domove protocol
+    send('position startpos')
+
     board = [row[:] for row in INITIAL_BOARD]
     moves = []
     move_num = 1
@@ -127,9 +130,8 @@ def main():
         apply_move(board, user_input)
         print_board(board)
 
-        # Send position + go to engine
-        pos_cmd = "position startpos moves " + " ".join(moves)
-        send(pos_cmd)
+        # Send user's move via domove, then go
+        send(f'domove {user_input}')
         send('go')
         print(f"   Engine thinking...", end='', flush=True)
         start = time.time()
@@ -148,6 +150,8 @@ def main():
             proc.wait()
             return
 
+        # Apply engine's move via domove
+        send(f'domove {engine_move}')
         print(f"\r{move_num}. ...Black: {engine_move}  ({elapsed:.1f}s)")
         moves.append(engine_move)
         apply_move(board, engine_move)

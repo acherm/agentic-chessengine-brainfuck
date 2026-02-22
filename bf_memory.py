@@ -63,6 +63,10 @@ MOVE_TO = 235
 MOVE_PIECE = 236
 MOVE_TARGET = 237
 
+# For move skip / legality loop
+SKIP_COUNT = 3     # TEMP+3: how many pseudo-legal moves to skip
+FOUND_LEGAL = 4    # TEMP+4: set when a legal move is found
+
 # For is_attacked / legality
 KING_SQ = 240
 ATTACKED = 241

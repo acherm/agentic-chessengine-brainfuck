@@ -141,15 +141,13 @@ class BFEmitter:
 
     def print_char(self, char_val):
         """Print a specific ASCII character using a temp cell."""
-        from bf_memory import TEMP
-        t = TEMP + 30  # Use last temp
+        t = 229  # Dedicated print temp cell (between INPUT_LEN=228 and SCRATCH=230)
         self.set_cell(t, char_val)
         self.output(t)
 
     def print_string(self, s):
         """Print a string literal."""
-        from bf_memory import TEMP
-        t = TEMP + 30
+        t = 229  # Dedicated print temp cell
         self.clear(t)
         current_val = 0
         for ch in s:
