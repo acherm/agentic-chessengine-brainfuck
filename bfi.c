@@ -6,7 +6,8 @@
  *   - 65536-cell tape
  *   - EOF returns 0
  *   - Flushes stdout after each '\n' output
- *   - Precomputed bracket jump table for speed
+ *   - RLE compilation: consecutive ><+- collapsed into single instructions
+ *   - Precomputed bracket jump table on compiled instruction array
  */
 
 #include <stdio.h>
@@ -16,15 +17,21 @@
 #define TAPE_SIZE 65536
 #define MAX_PROGRAM (16 * 1024 * 1024)  /* 16 MB max BF program */
 
+typedef struct {
+    char op;   /* '>', '<', '+', '-', '.', ',', '[', ']' */
+    int  arg;  /* count for ><+-, jump index for [] */
+} Instr;
+
 static unsigned char tape[TAPE_SIZE];
-static int *jump;  /* precomputed bracket targets */
 
 int main(int argc, char *argv[]) {
     FILE *fp;
-    char *prog;
-    long prog_len;
+    char *raw;
+    long raw_len;
+    Instr *ops;
+    int num_ops;
     int dp = 0;  /* data pointer */
-    long ip = 0; /* instruction pointer */
+    int ip = 0;  /* instruction pointer */
 
     if (argc < 2) {
         fprintf(stderr, "Usage: %s <program.bf>\n", argv[0]);
@@ -38,79 +45,109 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    prog = (char *)malloc(MAX_PROGRAM);
-    if (!prog) {
+    raw = (char *)malloc(MAX_PROGRAM);
+    if (!raw) {
         fprintf(stderr, "Error: out of memory\n");
         fclose(fp);
         return 1;
     }
 
     /* Load only BF instructions */
-    prog_len = 0;
+    raw_len = 0;
     {
         int c;
-        while ((c = fgetc(fp)) != EOF && prog_len < MAX_PROGRAM - 1) {
+        while ((c = fgetc(fp)) != EOF && raw_len < MAX_PROGRAM - 1) {
             if (c == '>' || c == '<' || c == '+' || c == '-' ||
                 c == '.' || c == ',' || c == '[' || c == ']') {
-                prog[prog_len++] = (char)c;
+                raw[raw_len++] = (char)c;
             }
         }
     }
-    prog[prog_len] = '\0';
     fclose(fp);
 
-    /* Allocate jump table */
-    jump = (int *)calloc(prog_len, sizeof(int));
-    if (!jump) {
-        fprintf(stderr, "Error: out of memory for jump table\n");
-        free(prog);
+    /* Phase 1: RLE compress into Instr array */
+    ops = (Instr *)malloc(raw_len * sizeof(Instr));
+    if (!ops) {
+        fprintf(stderr, "Error: out of memory for ops\n");
+        free(raw);
         return 1;
     }
 
-    /* Build jump table for brackets */
+    num_ops = 0;
     {
-        int *stack = (int *)malloc(prog_len * sizeof(int));
+        long i = 0;
+        while (i < raw_len) {
+            char ch = raw[i];
+            if (ch == '>' || ch == '<' || ch == '+' || ch == '-') {
+                int count = 1;
+                while (i + count < raw_len && raw[i + count] == ch)
+                    count++;
+                ops[num_ops].op = ch;
+                ops[num_ops].arg = count;
+                num_ops++;
+                i += count;
+            } else {
+                /* '.', ',', '[', ']' — not collapsed */
+                ops[num_ops].op = ch;
+                ops[num_ops].arg = 0;
+                num_ops++;
+                i++;
+            }
+        }
+    }
+    free(raw);
+
+    /* Shrink allocation */
+    ops = (Instr *)realloc(ops, num_ops * sizeof(Instr));
+
+    fprintf(stderr, "RLE: %ld raw -> %d instructions (%.1fx compression)\n",
+            raw_len, num_ops, (double)raw_len / num_ops);
+
+    /* Phase 2: Build jump table for brackets on Instr array */
+    {
+        int *stack = (int *)malloc(num_ops * sizeof(int));
         int sp = 0;
-        long i;
-        for (i = 0; i < prog_len; i++) {
-            if (prog[i] == '[') {
-                stack[sp++] = (int)i;
-            } else if (prog[i] == ']') {
+        int i;
+        for (i = 0; i < num_ops; i++) {
+            if (ops[i].op == '[') {
+                stack[sp++] = i;
+            } else if (ops[i].op == ']') {
                 if (sp <= 0) {
-                    fprintf(stderr, "Error: unmatched ']' at position %ld\n", i);
-                    free(prog);
+                    fprintf(stderr, "Error: unmatched ']' at instruction %d\n", i);
+                    free(ops);
+                    free(stack);
                     return 1;
                 }
                 sp--;
-                jump[stack[sp]] = (int)i;
-                jump[i] = stack[sp];
+                ops[stack[sp]].arg = i;
+                ops[i].arg = stack[sp];
             }
         }
         if (sp != 0) {
             fprintf(stderr, "Error: unmatched '[' (%d open)\n", sp);
             free(stack);
-            free(prog);
+            free(ops);
             return 1;
         }
         free(stack);
     }
 
-    /* Execute */
+    /* Phase 3: Execute */
     memset(tape, 0, sizeof(tape));
 
-    while (ip < prog_len) {
-        switch (prog[ip]) {
+    while (ip < num_ops) {
+        switch (ops[ip].op) {
         case '>':
-            dp = (dp + 1) & (TAPE_SIZE - 1);
+            dp = (dp + ops[ip].arg) & (TAPE_SIZE - 1);
             break;
         case '<':
-            dp = (dp - 1) & (TAPE_SIZE - 1);
+            dp = (dp - ops[ip].arg) & (TAPE_SIZE - 1);
             break;
         case '+':
-            tape[dp]++;
+            tape[dp] += (unsigned char)ops[ip].arg;
             break;
         case '-':
-            tape[dp]--;
+            tape[dp] -= (unsigned char)ops[ip].arg;
             break;
         case '.':
             putchar(tape[dp]);
@@ -125,17 +162,16 @@ int main(int argc, char *argv[]) {
             break;
         case '[':
             if (tape[dp] == 0)
-                ip = jump[ip];
+                ip = ops[ip].arg;
             break;
         case ']':
             if (tape[dp] != 0)
-                ip = jump[ip];
+                ip = ops[ip].arg;
             break;
         }
         ip++;
     }
 
-    free(jump);
-    free(prog);
+    free(ops);
     return 0;
 }

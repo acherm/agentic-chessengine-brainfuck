@@ -5,7 +5,7 @@ A chess engine that speaks the UCI protocol, written entirely in Brainfuck. The 
 ## Quick Start
 
 ```bash
-make                # builds bfi (interpreter) + chess.bf (~733 KB)
+make                # builds bfi (interpreter) + chess.bf (~943 KB)
 printf 'uci\nisready\nposition startpos\ngo\nquit\n' | ./bfi chess.bf
 ```
 
@@ -15,7 +15,7 @@ id name BFChess
 id author BFChess
 uciok
 readyok
-bestmove b1a3
+bestmove d2d4
 ```
 
 ## How It Works
@@ -38,7 +38,7 @@ The Python compiler emits BF code through a `BFEmitter` that tracks a virtual da
 
 ### Memory Layout
 
-All hot cells are packed within addresses 0-120 to minimize pointer travel:
+All hot cells are packed within addresses 0-140 to minimize pointer travel:
 
 ```
  Cells 0-15:     Temporaries
@@ -48,15 +48,17 @@ All hot cells are packed within addresses 0-120 to minimize pointer travel:
  Cells 94-99:    Extra temps near board/buffer boundary
  Cells 100-227:  Input buffer (128 bytes)
  Cell 228:       Input length
+ Cells 120-129:  Legality workspace (make/unmake, retry loop)
+ Cells 130-139:  Evaluation workspace (MVV-LVA scoring)
 ```
 
 ### Key Constraint
 
 BF has no random access. Reading `board[index]` where `index` is a runtime value requires a **64-way switch**: compare the index against 0, 1, 2, ..., 63 and copy from the matching fixed cell. This is the fundamental cost driver.
 
-## Size Optimization: 119 MB to 733 KB
+## Size Optimization: 119 MB to 943 KB
 
-The naive approach — unrolling every board access at compile time — produced a 119 MB BF program. The generated code is now **733 KB** (a 166x reduction). Here's how.
+The naive approach — unrolling every board access at compile time — produced a 119 MB BF program. The generated code is now **943 KB** (a 126x reduction). Here's how.
 
 ### The Problem
 
@@ -131,30 +133,54 @@ BF pointer movement (`>` and `<`) is O(distance). Moving work cells close to the
 | UCI + misc | 10 KB | 2 KB | 5x |
 | **Total** | **119 MB** | **733 KB** | **166x** |
 
-## Verification
+## Move Evaluation: MVV-LVA + Center Bonus
 
-All tests pass:
+The engine enumerates all legal moves, scores each one, and picks the best:
+
+| Move type | Score |
+|---|---|
+| Any legal move (base) | 1 |
+| Capture pawn | +10 |
+| Capture knight/bishop | +30 |
+| Capture rook | +50 |
+| Capture queen | +90 |
+| Move to center (d4/e4/d5/e5) | +3 |
+
+From the starting position, BFChess plays **1. d2d4** (center pawn) rather than the first legal move found.
+
+## Strength Assessment
+
+Tested against Stockfish 18 at minimum strength (Elo 1320, Skill 0, depth 1) over 20 games alternating sides:
+
+```
+Score: +0 =0 -20 / 20 (0%)
+Estimated Elo: ~520
+```
+
+The MVV-LVA scoring is a clear improvement over random play (~200 Elo) — the engine captures valuable pieces and prefers center squares — but the lack of any lookahead means it cannot see threats or plan ahead. See [ASSESSMENT.md](ASSESSMENT.md) for full analysis and game records.
+
+## Verification
 
 ```
 $ python3 generate.py
-Generated chess.bf: 750964 bytes (733.4 KB / 0.72 MB)
-
-$ printf 'uci\nisready\nquit\n' | ./bfi chess.bf
-id name BFChess
-id author BFChess
-uciok
-readyok
+Generated chess.bf: 965597 bytes (943.0 KB / 0.90 MB)
 
 $ printf 'uci\nisready\nposition startpos\ngo\nquit\n' | ./bfi chess.bf
-bestmove b1a3
+bestmove d2d4
 
-$ printf 'uci\nisready\nposition startpos moves e2e4\ngo\nquit\n' | ./bfi chess.bf
-bestmove a7a6
+$ python3 test_perft.py   # 7/7 perft positions pass
+```
+
+## Playing Against Stockfish
+
+```bash
+python3 play_stockfish.py --games 10 --both-sides --elo 1320 --depth 1 --pgn games.pgn -v
 ```
 
 ## Limitations
 
-- Pseudo-legal move generation only (no check/pin detection)
-- First legal move found, no search or evaluation
-- No castling, en passant, or promotion handling in move generation
-- No time management (responds instantly with first move found)
+- No search tree (single-ply greedy evaluation only)
+- No castling, en passant in move generation
+- Queen-only promotion (no underpromotion)
+- No king safety, pawn structure, or positional evaluation
+- No time management
