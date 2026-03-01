@@ -1601,21 +1601,22 @@ def _score_move(e):
 
     Scoring components:
       - Base: +1
-      - MVV capture: P=10, N=30, B=30, R=50, Q=90
+      - MVV capture: P=20, N=64, B=66, R=100, Q=180
       - LVA capture: P=+5, N/B=+3, R=+1, Q/K=+0
-      - EP capture: +10
-      - Castling: +20
-      - Non-king activity: +5
-      - Inner center (d4,e4,d5,e5): +5
-      - Knight inner center bonus: +5 extra (total +10)
-      - Extended center (12 squares): +2
-      - Development (leave back rank): +2
-      - Pawn center push (pawn to inner center): +4
-      - Pawn advancement (rank 7/2): +35, (rank 6/3): +15
-      - Check bonus: +25 (applied after dest_attacked penalty)
-      - Check+capture synergy: +15 extra
+      - EP capture: +20
+      - Castling: +15
+      - Non-king activity: +3
+      - Inner center (d4,e4,d5,e5): +3
+      - Knight inner center bonus: +3 extra (total +6)
+      - Extended center (12 squares): +1
+      - Development (leave back rank): +1
+      - Pawn center push (pawn to inner center): +2
+      - Pawn advancement (rank 7/2): +20, (rank 6/3): +10
+      - Rook on 7th rank: +5
+      - Check bonus: +15 (applied after dest_attacked penalty)
+      - Check+capture synergy: +10 extra
     Also saves VICTIM_TYPE and ATTACKER_TYPE for exchange detection.
-    Max possible: ~181 (under 255 8-bit limit).
+    Max possible: ~234 (under 255 8-bit limit).
     """
     e.clear(MOVE_SCORE)
     e.inc(MOVE_SCORE, 1)  # base score
@@ -1633,7 +1634,7 @@ def _score_move(e):
         e.set_cell(PIECE_TYPE, bv - 6)
         e.clear(E_TMP1); e.move_to(E_TMP1); e.emit(']')
     # MVV: map victim piece type -> value
-    for pt, val in [(1, 10), (2, 30), (3, 30), (4, 50), (5, 90)]:
+    for pt, val in [(1, 20), (2, 64), (3, 66), (4, 100), (5, 180)]:
         compare_eq(e, PIECE_TYPE, pt, E_TMP1, E_TMP2)
         e.move_to(E_TMP1); e.emit('[')
         e.inc(MOVE_SCORE, val)
@@ -1658,16 +1659,16 @@ def _score_move(e):
     e.clear(PIECE_TYPE)
     e.move_to(PIECE_TYPE); e.emit(']')
 
-    # === EP capture fix: +10 ===
+    # === EP capture: +20 ===
     e.copy_to(IS_EP_MOVE, E_TMP1, E_TMP2)
     e.move_to(E_TMP1); e.emit('[')
-    e.inc(MOVE_SCORE, 10)
+    e.inc(MOVE_SCORE, 20)
     e.clear(E_TMP1); e.move_to(E_TMP1); e.emit(']')
 
-    # === Castling bonus: +20 ===
+    # === Castling bonus: +15 ===
     e.copy_to(IS_CASTLE_MOVE, E_TMP1, E_TMP2)
     e.move_to(E_TMP1); e.emit('[')
-    e.inc(MOVE_SCORE, 20)
+    e.inc(MOVE_SCORE, 15)
     e.clear(E_TMP1); e.move_to(E_TMP1); e.emit(']')
 
     # === Non-king activity bonus: +3 ===
@@ -1681,23 +1682,23 @@ def _score_move(e):
     e.move_to(E_TMP1); e.emit('[')
     e.inc(E_TMP3)
     e.clear(E_TMP1); e.move_to(E_TMP1); e.emit(']')
-    # if_zero on E_TMP3: not a king -> +5
+    # if_zero on E_TMP3: not a king -> +3
     e.set_cell(E_TMP4, 1)
     e.move_to(E_TMP3); e.emit('[')
     e.clear(E_TMP4)
     e.clear(E_TMP3); e.move_to(E_TMP3); e.emit(']')
     e.move_to(E_TMP4); e.emit('[')
-    e.inc(MOVE_SCORE, 5)
+    e.inc(MOVE_SCORE, 3)
     e.clear(E_TMP4); e.move_to(E_TMP4); e.emit(']')
 
     # === Center bonus (enhanced) ===
-    # Inner center (d4=27, e4=28, d5=35, e5=36): +5
+    # Inner center (d4=27, e4=28, d5=35, e5=36): +3
     for sq in [27, 28, 35, 36]:
         compare_eq(e, BEST_TO, sq, E_TMP1, E_TMP2)
         e.move_to(E_TMP1); e.emit('[')
-        e.inc(MOVE_SCORE, 5)
+        e.inc(MOVE_SCORE, 3)
         e.clear(E_TMP1); e.move_to(E_TMP1); e.emit(']')
-    # Extra knight centralization for inner center (+5 more, total +10)
+    # Extra knight centralization for inner center (+3 more, total +6)
     e.clear(E_TMP4)
     compare_eq(e, SAVED_PIECE, WHITE_KNIGHT, E_TMP1, E_TMP2)
     e.add_to(E_TMP1, E_TMP4)
@@ -1707,72 +1708,72 @@ def _score_move(e):
     for sq in [27, 28, 35, 36]:
         compare_eq(e, BEST_TO, sq, E_TMP1, E_TMP2)
         e.move_to(E_TMP1); e.emit('[')
-        e.inc(MOVE_SCORE, 5)
+        e.inc(MOVE_SCORE, 3)
         e.clear(E_TMP1); e.move_to(E_TMP1); e.emit(']')
     e.clear(E_TMP4); e.move_to(E_TMP4); e.emit(']')
-    # Extended center (c3-f3, c4, f4, c5, f5, c6-f6): +2
+    # Extended center (c3-f3, c4, f4, c5, f5, c6-f6): +1
     for sq in [18, 19, 20, 21, 26, 29, 34, 37, 42, 43, 44, 45]:
         compare_eq(e, BEST_TO, sq, E_TMP1, E_TMP2)
         e.move_to(E_TMP1); e.emit('[')
-        e.inc(MOVE_SCORE, 2)
+        e.inc(MOVE_SCORE, 1)
         e.clear(E_TMP1); e.move_to(E_TMP1); e.emit(']')
 
-    # === Development bonus: +2 for leaving back rank ===
+    # === Development bonus: +1 for leaving back rank ===
     # Knight/bishop starting squares: b1,c1,f1,g1,b8,c8,f8,g8
     for sq in [1, 2, 5, 6, 57, 58, 61, 62]:
         compare_eq(e, BEST_FROM, sq, E_TMP1, E_TMP2)
         e.move_to(E_TMP1); e.emit('[')
-        e.inc(MOVE_SCORE, 2)
+        e.inc(MOVE_SCORE, 1)
         e.clear(E_TMP1); e.move_to(E_TMP1); e.emit(']')
 
-    # === Pawn center push bonus: +4 for pawn to inner center ===
+    # === Pawn center push bonus: +2 for pawn to inner center ===
     for pawn_val in [WHITE_PAWN, BLACK_PAWN]:
         compare_eq(e, SAVED_PIECE, pawn_val, E_TMP1, E_TMP2)
         e.move_to(E_TMP1); e.emit('[')
         for sq in [27, 28, 35, 36]:
             compare_eq(e, BEST_TO, sq, E_TMP2, E_TMP3)
             e.move_to(E_TMP2); e.emit('[')
-            e.inc(MOVE_SCORE, 4)
+            e.inc(MOVE_SCORE, 2)
             e.clear(E_TMP2); e.move_to(E_TMP2); e.emit(']')
         e.clear(E_TMP1); e.move_to(E_TMP1); e.emit(']')
 
     # === Pawn advancement bonus ===
-    # White pawns: rank 7 (sq 48-55) +35, rank 6 (sq 40-47) +15
+    # White pawns: rank 7 (sq 48-55) +20, rank 6 (sq 40-47) +10
     compare_eq(e, SAVED_PIECE, WHITE_PAWN, E_TMP1, E_TMP2)
     e.move_to(E_TMP1); e.emit('[')
     for sq in range(48, 56):
         compare_eq(e, BEST_TO, sq, E_TMP2, E_TMP3)
         e.move_to(E_TMP2); e.emit('[')
-        e.inc(MOVE_SCORE, 35)
+        e.inc(MOVE_SCORE, 20)
         e.clear(E_TMP2); e.move_to(E_TMP2); e.emit(']')
     for sq in range(40, 48):
         compare_eq(e, BEST_TO, sq, E_TMP2, E_TMP3)
         e.move_to(E_TMP2); e.emit('[')
-        e.inc(MOVE_SCORE, 15)
+        e.inc(MOVE_SCORE, 10)
         e.clear(E_TMP2); e.move_to(E_TMP2); e.emit(']')
     e.clear(E_TMP1); e.move_to(E_TMP1); e.emit(']')
-    # Black pawns: rank 2 (sq 8-15) +35, rank 3 (sq 16-23) +15
+    # Black pawns: rank 2 (sq 8-15) +20, rank 3 (sq 16-23) +10
     compare_eq(e, SAVED_PIECE, BLACK_PAWN, E_TMP1, E_TMP2)
     e.move_to(E_TMP1); e.emit('[')
     for sq in range(8, 16):
         compare_eq(e, BEST_TO, sq, E_TMP2, E_TMP3)
         e.move_to(E_TMP2); e.emit('[')
-        e.inc(MOVE_SCORE, 35)
+        e.inc(MOVE_SCORE, 20)
         e.clear(E_TMP2); e.move_to(E_TMP2); e.emit(']')
     for sq in range(16, 24):
         compare_eq(e, BEST_TO, sq, E_TMP2, E_TMP3)
         e.move_to(E_TMP2); e.emit('[')
-        e.inc(MOVE_SCORE, 15)
+        e.inc(MOVE_SCORE, 10)
         e.clear(E_TMP2); e.move_to(E_TMP2); e.emit(']')
     e.clear(E_TMP1); e.move_to(E_TMP1); e.emit(']')
 
-    # === Rook on 7th rank bonus: +8 ===
+    # === Rook on 7th rank bonus: +5 ===
     compare_eq(e, SAVED_PIECE, WHITE_ROOK, E_TMP1, E_TMP2)
     e.move_to(E_TMP1); e.emit('[')
     for sq in range(48, 56):
         compare_eq(e, BEST_TO, sq, E_TMP2, E_TMP3)
         e.move_to(E_TMP2); e.emit('[')
-        e.inc(MOVE_SCORE, 8)
+        e.inc(MOVE_SCORE, 5)
         e.clear(E_TMP2); e.move_to(E_TMP2); e.emit(']')
     e.clear(E_TMP1); e.move_to(E_TMP1); e.emit(']')
     compare_eq(e, SAVED_PIECE, BLACK_ROOK, E_TMP1, E_TMP2)
@@ -1780,7 +1781,7 @@ def _score_move(e):
     for sq in range(8, 16):
         compare_eq(e, BEST_TO, sq, E_TMP2, E_TMP3)
         e.move_to(E_TMP2); e.emit('[')
-        e.inc(MOVE_SCORE, 8)
+        e.inc(MOVE_SCORE, 5)
         e.clear(E_TMP2); e.move_to(E_TMP2); e.emit(']')
     e.clear(E_TMP1); e.move_to(E_TMP1); e.emit(']')
 
@@ -2531,13 +2532,13 @@ def generate_legal_move(e):
     e.clear(E_TMP4); e.clear(E_TMP5)
     e.clear(E_TMP2); e.move_to(E_TMP2); e.emit(']')
     e.clear(E_TMP1); e.move_to(E_TMP1); e.emit(']')
-    # === Check bonus: +25 for giving check, +15 extra if also a capture ===
+    # === Check bonus: +15 for giving check, +10 extra if also a capture ===
     e.copy_to(GIVES_CHECK, E_TMP1, E_TMP2)
     e.move_to(E_TMP1); e.emit('[')
-    e.inc(MOVE_SCORE, 25)
+    e.inc(MOVE_SCORE, 15)
     e.copy_to(SAVED_CAPTURE, E_TMP2, E_TMP3)
     e.move_to(E_TMP2); e.emit('[')
-    e.inc(MOVE_SCORE, 15)
+    e.inc(MOVE_SCORE, 10)
     e.clear(E_TMP2); e.move_to(E_TMP2); e.emit(']')
     e.clear(E_TMP1); e.move_to(E_TMP1); e.emit(']')
     _is_score_better(e, L_TMP2)
