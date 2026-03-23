@@ -3698,8 +3698,21 @@ def generate_legal_move_depth2(e):
     generate_legal_move(e)
 
     # 5. Capture opponent's score
-    # BEST_SCORE=0 means no legal moves (checkmate/stalemate) = best for us
+    # BEST_SCORE=0 means no legal moves (checkmate/stalemate)
     e.copy_to(BEST_SCORE, D2_OPP_SCORE, L_TMP2)
+
+    # 5a. Stalemate detection: HAVE_LEGAL==0 AND IN_CHECK==0 → stalemate (draw)
+    # IN_CHECK was set by inner search's _check_in_check_direct()
+    # Checkmate (IN_CHECK==1): keep D2_OPP_SCORE=0 (best for us)
+    # Stalemate (IN_CHECK==0): set D2_OPP_SCORE=128 (draw/neutral)
+    compare_eq(e, HAVE_LEGAL, 0, L_TMP2, L_TMP3)
+    e.move_to(L_TMP2); e.emit('[')
+    compare_eq(e, IN_CHECK, 0, L_TMP3, L_TMP1)
+    e.move_to(L_TMP3); e.emit('[')
+    e.clear(D2_OPP_SCORE)
+    e.set_cell(D2_OPP_SCORE, 128)
+    e.clear(L_TMP3); e.move_to(L_TMP3); e.emit(']')
+    e.clear(L_TMP2); e.move_to(L_TMP2); e.emit(']')
 
     # 6. Restore pristine state
     _d2_restore_state(e, L_TMP2)
@@ -4334,9 +4347,21 @@ def generate_legal_move_depth3(e):
     generate_legal_move_depth2(e)
 
     # 5. Capture result: D2_BEST_SCORE = opponent's minimax score
-    # If D2_HAVE_LEGAL==0, opponent is checkmated → D2_BEST_SCORE stays at 255
-    # (initialized value), which is the best possible for us
+    # If D2_HAVE_LEGAL==0, opponent has no legal moves → D2_BEST_SCORE stays at 255
     e.copy_to(D2_BEST_SCORE, D3_OPP_RESULT, L_TMP2)
+
+    # 5a. Stalemate detection at depth-2: D2_HAVE_LEGAL==0 AND IN_CHECK==0
+    # IN_CHECK still reflects the depth-2 position (set by depth-2's _check_in_check_direct)
+    # Checkmate (IN_CHECK==1): keep D3_OPP_RESULT=255 (best for us)
+    # Stalemate (IN_CHECK==0): set D3_OPP_RESULT=128 (draw/neutral)
+    compare_eq(e, D2_HAVE_LEGAL, 0, L_TMP2, L_TMP3)
+    e.move_to(L_TMP2); e.emit('[')
+    compare_eq(e, IN_CHECK, 0, L_TMP3, L_TMP1)
+    e.move_to(L_TMP3); e.emit('[')
+    e.clear(D3_OPP_RESULT)
+    e.set_cell(D3_OPP_RESULT, 128)
+    e.clear(L_TMP3); e.move_to(L_TMP3); e.emit(']')
+    e.clear(L_TMP2); e.move_to(L_TMP2); e.emit(']')
 
     # 6. Restore pristine state
     _d3_restore_state(e, L_TMP2)

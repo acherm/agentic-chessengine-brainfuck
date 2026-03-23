@@ -1,0 +1,110 @@
+[Event "BFChess vs Stockfish"]
+[Site "Local"]
+[Date "2026.03.21"]
+[Round "1"]
+[White "BFChess (depth-3)"]
+[Black "Stockfish 18 (Elo 1320, TC 120+1s)"]
+[Result "0-1"]
+[TimeControl "120+1"]
+
+1. d4 d5 2. e4 e6 3. exd5 Qxd5 4. Bd3 Qxg2 5. d5 Qxd5 6. c3 Qxh1 7. Qa4+ Nc6 8. Bf1 Qd5 9. Qd4 Qd6 10. Qxd6 cxd6 11. Be3 Nf6 12. Bxa7 Bd7 13. Nd2 Rxa7 14. Ne4 Nxe4 15. Bd3 Nc5 16. Bxh7 Be7 17. Be4 Bd8 18. Nf3 Ne5 19. c4 Ned3+ 20. Kf1 Nxe4 21. Rd1 Ndxf2 22. Nd2 Rxa2 23. c5 d5 24. c6 Bxc6 25. Kg2 Nxd1 26. Nxe4 d4 27. Kg1 Bxe4 28. b3 Bc6 29. h3 Be4 30. b4 Rg2+ 31. Kf1 Ne3+ 32. Ke1 Bh4# 0-1
+
+[Event "BFChess vs Stockfish"]
+[Site "Local"]
+[Date "2026.03.21"]
+[Round "2"]
+[White "Stockfish 18 (Elo 1320, TC 120+1s)"]
+[Black "BFChess (depth-3)"]
+[Result "1-0"]
+[TimeControl "120+1"]
+
+1. Nh3 d5 2. Nf4 e5 3. Nh5 Bc5 4. e3 Ke7 5. b4 d4 6. c3 Qd5 7. exd4 Qxa2 8. Ba3 Bg4 9. Rxa2 g6 10. Qxg4 f6 11. Qe2 Kd8 12. Qe4 gxh5 13. Qxb7 Nc6 14. dxc5 Rb8 15. Qxc6 Ke7 16. Qxc7+ Ke6 17. Kd1 e4 18. Bc4+ Kf5 19. Qxb8 Nh6 20. Qb7 Rd8 21. Qg7 e3 22. Qxh7+ Kf4 23. Qxh6+ Kf5 24. Qh7+ Kf4 25. g3+ Kf3 26. Qb7+ Kxf2 27. d3+ e2+ 28. Rxe2# 1-0
+
+[Event "BFChess vs Stockfish"]
+[Site "Local"]
+[Date "2026.03.21"]
+[Round "3"]
+[White "BFChess (depth-3)"]
+[Black "Stockfish 18 (Elo 1320, TC 120+1s)"]
+[Result "0-1"]
+[TimeControl "120+1"]
+
+1. d4 d5 2. e4 Nc6 3. f3 e5 4. Kd2 Bb4+ 5. Kd3 exd4 6. Bf4 Bd6 7. Ke2 dxe4 8. Bxd6 exf3+ 9. Kf2 Nf6 10. gxf3 cxd6 11. c3 Qb6 12. Qb3 Qd8 13. Qxf7+ Kxf7 14. Bc4+ Ke7 15. Be6 Bxe6 16. cxd4 Qb6 17. Ne2 Ng4+ 18. Kg1 Nxd4 19. Nxd4 d5 20. fxg4 Qxd4+ 21. Kf1 Qd1+ 22. Kf2 Raf8+ 23. Kg2 Qe2+ 24. Kg3 Qf3+ 25. Kh4 Qxg4# 0-1
+
+[Event "BFChess vs Stockfish"]
+[Site "Local"]
+[Date "2026.03.21"]
+[Round "4"]
+[White "Stockfish 18 (Elo 1320, TC 120+1s)"]
+[Black "BFChess (depth-3)"]
+[Result "1-0"]
+[TimeControl "120+1"]
+
+1. c3 Nf6 2. Nf3 d5 3. e3 Nc6 4. c4 e5 5. a3 d4 6. d3 Bxa3 7. bxa3 O-O 8. Qc2 Ne4 9. Be2 Nc3 10. Nxc3 Qd5 11. Nxd5 e4 12. Nd2 dxe3 13. Nxe3 Nd4 14. Qd1 Be6 15. Ra2 Bxc4 16. dxc4 Nf3+ 17. gxf3 b5 18. Kf1 b4 19. c5 bxa3 20. Nxe4 c6 21. h3 f6 22. Nxf6+ Kf7 23. f4 Rfe8 24. Qd7+ Re7 25. Bc4+ Kxf6 26. Qxc6+ Re6 27. Qxe6# 1-0
+
+[Event "BFChess vs Stockfish"]
+[Site "Local"]
+[Date "2026.03.21"]
+[Round "5"]
+[White "BFChess (depth-3)"]
+[Black "Stockfish 18 (Elo 1320, TC 120+1s)"]
+[Result "0-1"]
+[TimeControl "120+1"]
+
+1. d4 c6 2. e4 Qc7 3. d5 cxd5 4. Qxd5 Nf6 5. e5 Nxd5 6. Kd2 Qxe5 7. Nf3 Qd6 8. Nd4 Nc6 9. Nc3 Qh6+ 10. f4 Nb6 11. Nd5 Qd6 12. Nc7+ Qxc7 13. Nxc6 bxc6 14. Kd3 a5 15. Bd2 d5 16. c4 d4 17. Be2 Qd6 18. Raf1 Bf5# 0-1
+
+[Event "BFChess vs Stockfish"]
+[Site "Local"]
+[Date "2026.03.21"]
+[Round "6"]
+[White "Stockfish 18 (Elo 1320, TC 120+1s)"]
+[Black "BFChess (depth-3)"]
+[Result "1-0"]
+[TimeControl "120+1"]
+
+1. c3 Nf6 2. Qc2 e6 3. d4 c5 4. Bg5 Ne4 5. Bxd8 cxd4 6. Bh4 Be7 7. Qxe4 O-O 8. Bxe7 Nc6 9. Bh4 d5 10. Qd3 Bd7 11. cxd4 e5 12. Na3 Be6 13. e3 Bf5 14. Qxf5 Rfe8 15. Bd3 Rf8 16. Qxh7# 1-0
+
+[Event "BFChess vs Stockfish"]
+[Site "Local"]
+[Date "2026.03.21"]
+[Round "7"]
+[White "BFChess (depth-3)"]
+[Black "Stockfish 18 (Elo 1320, TC 120+1s)"]
+[Result "0-1"]
+[TimeControl "120+1"]
+
+1. d4 d5 2. e4 dxe4 3. f3 Nf6 4. Bb5+ Nbd7 5. Bxd7+ Nxd7 6. Be3 e5 7. Ne2 Qh4+ 8. Ng3 f5 9. fxe4 Nf6 10. c3 Bd6 11. dxe5 Ng4 12. Qxg4 Qxg4 13. exd6 O-O 14. dxc7 h5 15. exf5 Re8 16. O-O Rxe3 17. f6 gxf6 18. Nxh5 Qe2 19. Nd2 Qxh5 20. Ne4 Rxe4 21. b4 Qg6 22. Rxf6 Qxf6 23. c4 Kf7 24. Rb1 Qd4+ 25. Kh1 Qf2 26. Rd1 Qe1+ 27. Rxe1 Rxe1# 0-1
+
+[Event "BFChess vs Stockfish"]
+[Site "Local"]
+[Date "2026.03.21"]
+[Round "8"]
+[White "Stockfish 18 (Elo 1320, TC 120+1s)"]
+[Black "BFChess (depth-3)"]
+[Result "1-0"]
+[TimeControl "120+1"]
+
+1. e3 Nf6 2. d4 e5 3. Be2 Bb4+ 4. c3 Bxc3+ 5. bxc3 exd4 6. Nf3 c5 7. a3 O-O 8. exd4 Re8 9. O-O Qc7 10. d5 Rxe2 11. Qxe2 Qxh2+ 12. Nxh2 Nxd5 13. Qe8# 1-0
+
+[Event "BFChess vs Stockfish"]
+[Site "Local"]
+[Date "2026.03.21"]
+[Round "9"]
+[White "BFChess (depth-3)"]
+[Black "Stockfish 18 (Elo 1320, TC 120+1s)"]
+[Result "0-1"]
+[TimeControl "120+1"]
+
+1. d4 c6 2. e4 g6 3. Nc3 h6 4. Nd5 Qa5+ 5. Bd2 Qd8 6. Qf3 Bg7 7. Bxh6 Rxh6 8. O-O-O Na6 9. Bxa6 cxd5 10. Bxb7 Bxb7 11. Qxf7+ Kxf7 12. f3 Bc8 13. Rd3 dxe4 14. Re3 d5 15. Rxe4 dxe4 16. Nh3 Qb6 17. Ng5+ Kf8 18. Ne6+ Qxe6 19. d5 Bxb2+ 20. Kb1 Qb6 21. d6 Be5+ 22. Kc1 exd6 23. c3 Ba6 24. f4 Qe3+ 25. Kb1 Bxc3 26. f5 Bd3# 0-1
+
+[Event "BFChess vs Stockfish"]
+[Site "Local"]
+[Date "2026.03.21"]
+[Round "10"]
+[White "Stockfish 18 (Elo 1320, TC 120+1s)"]
+[Black "BFChess (depth-3)"]
+[Result "1-0"]
+[TimeControl "120+1"]
+
+1. Nc3 d5 2. d4 c5 3. Bf4 Nc6 4. Nb5 Nf6 5. Nc7+ Qxc7 6. Bxc7 Rg8 7. e4 e5 8. Bb5 cxd4 9. Bxe5 d3 10. Bxc6+ bxc6 11. a3 Bxa3 12. Qxd3 Bxb2 13. Bxb2 Be6 14. Nf3 dxe4 15. Qa3 exf3 16. Qc5 fxg2 17. O-O-O Rf8 18. Qxc6+ Bd7 19. Rhe1+ Kd8 20. Bxf6+ gxf6 21. c3 Re8 22. Qxd7# 1-0
+

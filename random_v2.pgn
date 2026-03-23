@@ -1,0 +1,100 @@
+[Event "BFChess vs Random"]
+[Site "Local"]
+[Date "2026.03.21"]
+[Round "1"]
+[White "BFChess (depth-3)"]
+[Black "Random"]
+[Result "1-0"]
+
+1. d4 d6 2. d5 b6 3. Qd4 Nh6 4. Qe5 Be6 5. Qxg7 Bxg7 6. Bxh6 Bd4 7. e4 Bc8 8. Bb5+ Nd7 9. e5 Rf8 10. Bxf8 dxe5 11. d6 Be3 12. dxc7 Bc1 13. Bxe7 Be3 14. cxd8=Q# 1-0
+
+[Event "BFChess vs Random"]
+[Site "Local"]
+[Date "2026.03.21"]
+[Round "2"]
+[White "Random"]
+[Black "BFChess (depth-3)"]
+[Result "1/2-1/2"]
+
+1. e3 Nf6 2. Be2 Nc6 3. b4 Nxb4 4. d4 d5 5. Nd2 Nxc2+ 6. Qxc2 Be6 7. Rb1 Qd6 8. g4 c6 9. Nf1 Bxg4 10. Nf3 Bxf3 11. Qf5 Qxh2 12. Rb2 Qxf2+ 13. Kd2 Qxe2+ 14. Kc3 Qxb2+ 15. Kd3 Be4+ 16. Qxe4 Qd2+ 17. Nxd2 Nxe4 18. Re1 e5 19. Ba3 exd4 20. Rd1 Bxa3 21. Nxe4 dxe4+ 22. Kc4 c5 23. Rd3 b5+ 24. Kd5 O-O 25. Rxa3 f6 26. Kc6 c4 27. Rb3 Rf7 28. Rc3 Rc7+ 29. Kd6 Rc6+ 30. Ke7 Rd6 31. Ra3 Rc6 32. exd4 c3 33. Rb3 Rc4 34. Kd7 Ra4 35. Rb2 Rxd4+ 36. Kc7 e3 37. a4 Rc4+ 38. Kd7 Rd4+ 39. Ke7 Re4+ 40. Kd7 Rd4+ 41. Kc6 Rc4+ 42. Kxb5 Rc5+ 43. Ka6 Rc6+ 44. Rb6 Rac8 45. Kb5 Rc5+ 46. Ka6 Re5 47. Rb4 c2 48. Rh4 Rd5 49. Rc4 Rxc4 50. Kb7 Rcd4 51. Kc6 Rd2 52. a5 c1=Q+ 53. Kb7 Rb2+ 54. Ka8 Rxa5 1/2-1/2
+
+[Event "BFChess vs Random"]
+[Site "Local"]
+[Date "2026.03.21"]
+[Round "3"]
+[White "BFChess (depth-3)"]
+[Black "Random"]
+[Result "1/2-1/2"]
+
+1. d4 b5 2. Nc3 Nf6 3. Nxb5 e5 4. Nxc7+ Qxc7 5. d5 Qc6 6. Qd4 Ng8 7. Qxe5+ Qe6 8. Qxb8 d6 9. Qb5+ Ke7 10. Bg5+ Nf6 11. Qc5 h5 12. Qxa7+ Kd8 13. Qxa8 h4 14. Qa5+ Ke7 15. Qc5 Rh6 16. Bxh6 gxh6 17. Qc4 Qh3 18. Qe4+ Be6 19. Qxe6+ fxe6 20. g4 Kd7 21. Nf3 Nxd5 22. Ne5+ Kd8 23. Nc6+ Kc7 24. Nd4 Nb4 25. Nxe6+ Kc8 26. Rc1 Qf3 27. exf3 Na6 28. Bxa6+ Kd7 29. Bc8+ Kc6 30. Bb7+ Kb5 31. Bd5 h3 32. Be4 Bg7 33. Bd5 h5 34. gxh5 Ka5 35. Be4 Bf8 36. h6 Ka6 37. h7 Bh6 38. h8=Q Bf4 39. Bd3+ Ka7 40. Qd4+ Ka8 41. Be4+ d5 42. Qa7+ Kxa7 43. c4 Bxh2 44. cxd5 Kb8 45. d6 Bxd6 46. Rc8+ Ka7 47. Rc7+ Kb6 48. Rb7+ Ka6 49. Ra7+ Kb5 50. Nd4+ Kc5 51. Rc7+ Kxd4 52. Rd7 Kc5 53. b4+ Kc4 54. Bd5+ Kc3 55. f4 h2 56. Rxd6 Kd4 57. Kd2 1/2-1/2
+
+[Event "BFChess vs Random"]
+[Site "Local"]
+[Date "2026.03.22"]
+[Round "4"]
+[White "Random"]
+[Black "BFChess (depth-3)"]
+[Result "1/2-1/2"]
+
+1. Nf3 d5 2. c4 Nc6 3. a3 e5 4. b3 Bxa3 5. Nd4 Bxc1 6. Ne6 dxc4 7. Nf8 Nf6 8. Na3 Qxd2+ 9. Qxd2 Nd7 10. Kd1 Bxd2 11. Nb1 cxb3 12. Rxa7 Nxf8 13. Kxd2 Nxa7 14. e3 e4 15. Ke2 Be6 16. Na3 O-O-O 17. Ke1 Rd2 18. Nb1 Rxf2 19. g4 Rxf1+ 20. Rxf1 Bxg4 21. Rf6 gxf6 22. Kd2 Ne6 23. h3 Rd8+ 24. Kc1 b2+ 25. Kxb2 Rd2+ 26. Ka3 Nd4 27. Kb4 Rb2+ 28. Ka4 Ndb5 29. Nc3 Rb4+ 30. Kxb4 c5+ 31. Ka4 Nxc3+ 32. Ka3 Nd5 33. Kb2 Bxh3 34. Kb3 Bf5 35. Kb2 c4 36. Ka3 c3 37. Kb3 c2 38. Kb2 Be6 39. Kb3 Bf5 40. Ka3 Be6 41. Kb2 Bf5 42. Kc1 Nxe3 43. Kd2 Nd5 44. Ke1 c1=Q+ 45. Kf2 Nf4 46. Kg3 e3 47. Kf3 Qc7 48. Kxe3 Qd6 49. Kf3 Nd5 50. Ke2 Qf4 51. Ke1 Nc3 1/2-1/2
+
+[Event "BFChess vs Random"]
+[Site "Local"]
+[Date "2026.03.22"]
+[Round "5"]
+[White "BFChess (depth-3)"]
+[Black "Random"]
+[Result "1/2-1/2"]
+
+1. d4 e6 2. e4 Qh4 3. Nc3 e5 4. dxe5 Qxh2 5. Qxd7+ Kxd7 6. e6+ Kxe6 7. Nd5 Nh6 8. Nf4+ Kd7 9. Nd5 Qf4 10. Bb5+ c6 11. Bxc6+ Kd6 12. Bxb7 f5 13. Rxh6+ gxh6 14. Bxf4+ Kc5 15. Bxb8 Kd4 16. exf5 Be7 17. Nxe7 h5 18. Nxc8 Rf8 19. Bxa7+ Ke5 20. O-O-O Rb8 21. f6 Ke6 22. f7 Rg8 23. Bd5+ Ke5 24. Bxb8+ Kf6 25. Be5+ Kxe5 26. Be4 h4 27. Bxh7 h3 28. gxh3 Rg7 29. Be4 Rg2 30. Rd5+ Kf4 31. Bxg2 1/2-1/2
+
+[Event "BFChess vs Random"]
+[Site "Local"]
+[Date "2026.03.22"]
+[Round "6"]
+[White "Random"]
+[Black "BFChess (depth-3)"]
+[Result "1/2-1/2"]
+
+1. b4 Nc6 2. f4 e5 3. f5 g6 4. Nf3 Bxb4 5. a4 Bxd2+ 6. Qxd2 Nd4 7. Qd1 Nxf3+ 8. gxf3 e4 9. Be3 Nf6 10. Bf2 exf3 11. Bh3 gxf5 12. Bd4 O-O 13. Kd2 Ne4+ 14. Kd3 d5 15. Bc3 Nf2+ 16. Ke3 f4+ 17. Kd2 Qd6 18. Ra3 Bxh3 19. Rg1+ Bg2 20. Ba5 Qe5 21. Bc3 Qxe2+ 22. Qxe2 Ne4+ 23. Kd3 d4 24. Qxg2+ Ng3 25. Re1 Rad8 26. Bd2 Rfe8 27. Rg1 Re3+ 28. Kc4 Rd5 29. Ba5 Rxa3 30. Re1 Rxa5 31. Qf2 d3 32. Qxg3+ Kf8 33. Re7 Kxe7 34. Nc3 Rxc3+ 35. Kd4 Rxa4+ 36. Kd5 dxc2 37. Qxf3 Rd4+ 38. Kxd4 Rxf3 39. Kd5 Rh3 40. Ke4 f3 41. Kf4 c6 42. Ke4 f2 43. Kf5 c5 44. Ke4 c4 45. Ke5 c3 46. Kd5 f6 47. Ke4 f5+ 48. Kd4 f4 49. Ke4 f3 50. Ke5 c1=Q 51. Ke4 c2 52. Kd5 Qe3 53. Kc4 Qd4+ 54. Kb3 Qe5 55. Ka3 Qd4 56. Ka2 Qc3 1/2-1/2
+
+[Event "BFChess vs Random"]
+[Site "Local"]
+[Date "2026.03.22"]
+[Round "7"]
+[White "BFChess (depth-3)"]
+[Black "Random"]
+[Result "1-0"]
+
+1. d4 d5 2. e4 dxe4 3. f3 Be6 4. d5 g5 5. fxe4 g4 6. e5 g3 7. Nf3 f5 8. exf6 Bf7 9. hxg3 b6 10. Rxh7 Be6 11. dxe6 Rxh7 12. f7+ Rxf7 13. exf7+ Kxf7 14. Ne5+ Kf6 15. Qd4 Qd5 16. Bc4 Qf7 17. Qf4+ Kg7 18. Qe4 Qf2+ 19. Kxf2 b5 20. Bxg8 c5 21. Qd5 Kh8 22. Be6 Nc6 23. Ng6+ Kh7 24. Qxc6 Kg7 25. Qc8 Rxc8 26. Nxf8 b4 27. Bh6+ Kxh6 28. Ng6 Rd8 29. Nxe7 Rh8 30. Nc3 b3 31. Nf5+ Kg5 32. Ne4+ Kh5 33. Rh1+ Kg4 34. Nfd6# 1-0
+
+[Event "BFChess vs Random"]
+[Site "Local"]
+[Date "2026.03.22"]
+[Round "8"]
+[White "Random"]
+[Black "BFChess (depth-3)"]
+[Result "0-1"]
+
+1. b3 d5 2. d3 e5 3. f4 Bd6 4. h3 Qh4+ 5. Kd2 Bxh3 6. gxh3 Nc6 7. Na3 O-O-O 8. Nb5 Nf6 9. Ba3 exf4 10. e4 fxe3+ 11. Kxe3 Nd4 12. Rh2 Bf4+ 13. Kxd4 Qxh3 14. Bb4 Qxd3+ 15. Kxd3 d4 16. a3 Ne4 17. c3 Be5 18. Qe2 Rd5 19. c4 Kd8 20. c5 Nxc5+ 21. Bxc5 Re8 22. Qf2 f6 23. Rd1 Bd6 24. Kc2 d3+ 25. Kd2 Re2+ 26. Bxe2 dxe2+ 27. Ke3 Bxc5+ 28. Rd4 Rd6 29. Rxh7 Rd5 30. Qe1 Bxd4+ 31. Kd2 Rxb5 32. Qxe2 Be3+ 33. Qxe3 Rd5+ 34. Qd4 Rxd4+ 35. Kc3 Rd3+ 36. Kc2 Rxb3 37. Rh6 Rxa3 38. Rh8+ Kd7 39. Kb2 Rd3 40. Rh6 Rd2+ 41. Kc1 Rc2+ 42. Kb1 Rb2+ 43. Kxb2 gxh6 44. Ka3 f5 45. Ka4 f4 46. Kb4 f3 47. Kb5 c6+ 48. Ka4 b5+ 49. Kb3 c5 50. Ka3 f2 51. Nf3 b4+ 52. Ka2 b3+ 53. Ka3 Kc6 54. Nh4 f1=Q 55. Ka4 Qc4+ 56. Ka3 Qe4 57. Nf3 Qxf3 58. Ka4 b2 59. Ka5 Qa3# 0-1
+
+[Event "BFChess vs Random"]
+[Site "Local"]
+[Date "2026.03.22"]
+[Round "9"]
+[White "BFChess (depth-3)"]
+[Black "Random"]
+[Result "1-0"]
+
+1. d4 g5 2. Nc3 Nc6 3. d5 d6 4. f4 Nf6 5. fxg5 b5 6. dxc6 Bb7 7. gxf6 Bg7 8. cxb7 Bf8 9. fxe7 Bh6 10. Bxh6 a5 11. Nxb5 Rg8 12. Nxd6+ Kd7 13. bxa8=Q Qxe7 14. Nc8+ Ke6 15. Qe4+ Kf6 16. Qed4+ Qe5 17. e4 Rg7 18. Bxg7+ Kg5 19. Nf3+ Kh5 20. Qd5 c5 21. Qxc5 f6 22. Bxf6 a4 23. Qdd6 a3 24. g4+ Kg6 25. Ne7+ Kh6 26. Ng8+ Kg6 27. Ne7+ Kf7 28. bxa3 Qxe7 29. Qcd5+ Kf8 30. Qxe7# 1-0
+
+[Event "BFChess vs Random"]
+[Site "Local"]
+[Date "2026.03.22"]
+[Round "10"]
+[White "Random"]
+[Black "BFChess (depth-3)"]
+[Result "1/2-1/2"]
+
+1. e4 Nf6 2. Qf3 Nc6 3. b3 Nd4 4. Ba3 Nxc2+ 5. Kd1 e5 6. g4 Nxe4 7. Qf5 Bxa3 8. Qe6+ dxe6 9. Be2 Nxf2+ 10. Kxc2 Qxd2+ 11. Nxd2 O-O 12. Bd1 e4 13. Nxe4 Bb2 14. Nf3 Kh8 15. Kxb2 f5 16. gxf5 Nxe4 17. Ng1 Nc3 18. Kc2 Ne4 19. Bf3 Nc3 20. a4 Nxa4 21. Bg4 Rf6 22. Bh5 c6 23. bxa4 Bd7 24. Kc1 Rh6 25. Kd2 Rxh5 26. a5 Rxh2+ 27. Kc3 Rg2 28. Rh3 Rxg1 29. Rh5 Be8 30. Rxg1 Bxh5 31. Kb3 Bf3 32. Rb1 Be4 33. Kc3 Bxb1 34. Kb2 b6 35. Kb3 bxa5 36. Kc3 e5 37. Kd2 c5 38. Ke1 c4 39. Kf2 c3 40. Kf3 h5 41. Ke2 a4 42. Kf1 a3 43. Kg1 a2 44. Kg2 a1=Q 45. Kf3 Qb2 46. Ke3 Qc2 47. Kf3 Qd1+ 48. Kf2 Qd4+ 49. Ke2 Qd5 50. Ke1 Qf3 51. f6 gxf6 1/2-1/2
+

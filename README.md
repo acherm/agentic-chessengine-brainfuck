@@ -5,7 +5,7 @@ A chess engine that speaks the UCI protocol, written entirely in Brainfuck. The 
 ## Quick Start
 
 ```bash
-make                # builds bfi (interpreter) + chess.bf (~943 KB)
+make                # builds bfi (interpreter) + chess.bf (~5.6 MB)
 printf 'uci\nisready\nposition startpos\ngo\nquit\n' | ./bfi chess.bf
 ```
 
@@ -18,6 +18,16 @@ readyok
 bestmove d2d4
 ```
 
+## Features
+
+- **Depth-3 minimax search** with alpha-beta pruning and captures-first move ordering
+- **Full move generation**: all piece types, castling (kingside + queenside), en passant, promotion
+- **MVV-LVA evaluation** with positional bonuses (center control, piece activity, pawn advancement, check detection, exchange awareness, anti-repetition)
+- **Stalemate detection**: distinguishes stalemate (draw, score 128) from checkmate at all search depths
+- **Legality checking** via make/unmake with 3-pass attack analysis (king safety, destination safety, check detection)
+- **UCI protocol**: `uci`, `isready`, `position startpos`, `domove`, `go`, `perft`, `quit`
+- **Perft validation**: 11/11 positions passing (including castling and en passant edge cases)
+
 ## How It Works
 
 ### Architecture
@@ -28,44 +38,91 @@ The Python compiler emits BF code through a `BFEmitter` that tracks a virtual da
 |---|---|
 | `bf_emitter.py` | Core BF emitter with pointer tracking |
 | `bf_memory.py` | Memory layout constants (cell addresses) |
-| `bf_primitives.py` | Control flow patterns: `if_zero`, `if_else`, `compare_eq`, `switch` |
+| `bf_primitives.py` | Control flow: `compare_eq`, `switch_on_value`, `if_else` |
 | `bf_io.py` | Read a line from stdin into a buffer |
-| `bf_chess.py` | Board init, parse UCI `position` commands, apply moves |
-| `bf_movegen.py` | Move generation and `bestmove` output |
-| `bf_uci.py` | UCI protocol loop (dispatch on `uci`, `isready`, `position`, `go`, `quit`) |
+| `bf_chess.py` | Board init, parse UCI `position` commands, apply moves (castling, EP, promotion) |
+| `bf_movegen.py` | Move generation, evaluation, depth-1/2/3 search, alpha-beta pruning |
+| `bf_uci.py` | UCI protocol loop (dispatch on `uci`, `isready`, `position`, `domove`, `go`, `perft`, `quit`) |
 | `generate.py` | Entry point: assembles everything into `chess.bf` |
-| `bfi.c` | Fast BF interpreter (8-bit wrapping, 64K tape, precomputed jump table) |
+| `bfi.c` | BF interpreter with RLE compression and precomputed jump table |
 
 ### Memory Layout
 
-All hot cells are packed within addresses 0-140 to minimize pointer travel:
-
 ```
- Cells 0-15:     Temporaries
- Cells 16-22:    Game state (side to move, castling, king positions, ...)
- Cells 23-28:    Movegen results (BEST_FROM, BEST_TO, HAVE_LEGAL, ...)
- Cells 30-93:    Chess board (64 squares, stride 1)
- Cells 94-99:    Extra temps near board/buffer boundary
- Cells 100-227:  Input buffer (128 bytes)
- Cell 228:       Input length
- Cells 120-129:  Legality workspace (make/unmake, retry loop)
- Cells 130-139:  Evaluation workspace (MVV-LVA scoring)
+ Cells 0-15:      Temporaries
+ Cells 16-22:     Game state (side to move, castling rights, king positions, EP file)
+ Cells 23-28:     Movegen hot cells (BEST_FROM, BEST_TO, HAVE_LEGAL, ...)
+ Cells 30-93:     Chess board (64 squares, stride 1)
+ Cells 94-99:     Extra temps near board/buffer boundary
+ Cells 100-227:   Input buffer (128 bytes)
+ Cells 120-129:   Legality workspace (make/unmake, retry loop)
+ Cells 130-159:   Evaluation workspace (scoring, attack detection, exchange, check)
+ Cells 160-172:   Depth-2 search control (D2_BEST_SCORE, D2_OPP_SCORE, ...)
+ Cells 173-183:   Depth-3 search control (D3_BEST_SCORE, D3_OPP_RESULT, ...)
+ Cells 315-351:   Saved outer-loop state for depth-2/3 iterations
+ Cells 400-471:   Depth-2 full state backup (64 board + 8 state cells)
+ Cells 600-671:   Depth-3 full state backup (64 board + 8 state cells)
 ```
 
 ### Key Constraint
 
 BF has no random access. Reading `board[index]` where `index` is a runtime value requires a **64-way switch**: compare the index against 0, 1, 2, ..., 63 and copy from the matching fixed cell. This is the fundamental cost driver.
 
-## Size Optimization: 119 MB to 943 KB
+## Search and Evaluation
 
-The naive approach — unrolling every board access at compile time — produced a 119 MB BF program. The generated code is now **943 KB** (a 126x reduction). Here's how.
+### Depth-3 Minimax with Alpha-Beta Pruning
 
-### The Problem
+The engine searches 3 plies deep (our move, opponent's reply, our reply):
 
-Move generation must check each of 64 squares for a piece, then for each piece type probe several target squares. A naive compile-time unroll emits separate BF code for every (square, piece, target) combination:
-- 64 squares x 6 piece types x ~15 targets x 2 colors = ~11,500 code blocks
-- Each block contains a 64-way board read (~1.5 KB) = **~17 MB just for board reads**
-- With surrounding logic: **119 MB total**
+- **Depth-3** (maximizer): tries each legal move, calls depth-2 for opponent's best reply, picks the move where the opponent's minimax score is highest (best for us)
+- **Depth-2** (minimizer): tries each legal move, calls depth-1 for our best reply, picks the move where our score is lowest (best for opponent)
+- **Depth-1** (maximizer): enumerates all legal moves, scores each with MVV-LVA + positional evaluation, picks the highest-scoring move
+
+Alpha-beta pruning and captures-first move ordering reduce the search tree significantly.
+
+### Move Evaluation (MVV-LVA + Positional)
+
+Each legal move is scored by `_score_move()`:
+
+| Component | Score |
+|---|---|
+| Any legal move (base) | 1 |
+| **Captures (MVV)** | |
+| Capture pawn | +20 |
+| Capture knight | +64 |
+| Capture bishop | +66 |
+| Capture rook | +100 |
+| Capture queen | +180 |
+| **LVA bonus** | |
+| Pawn captures | +5 |
+| Knight/Bishop captures | +3 |
+| Rook captures | +1 |
+| **Special moves** | |
+| En passant | +20 |
+| Castling | +15 |
+| **Positional** | |
+| Non-king piece activity | +3 |
+| Inner center (d4/e4/d5/e5) | +3 |
+| Knight inner center (extra) | +3 (total +6) |
+| Extended center | +1 |
+| Development (rank 1/8 exit) | +1 |
+| Pawn center push | +2 |
+| Pawn on rank 7/2 (near promo) | +20 |
+| Pawn on rank 6/3 | +10 |
+| Rook on 7th rank | +5 |
+| **Tactical** | |
+| Gives check | +15 |
+| Check + capture (synergy) | +10 |
+| **Penalties** | |
+| Non-capture to attacked square | score = 1 |
+| Losing capture (attacker > victim) | score = 2 |
+| Reverse of last move (anti-repetition) | score = 1 |
+
+Piece values use standard ratios scaled to fit 8-bit cells (max legal score ~234).
+
+## Size Optimization: 119 MB to ~5.6 MB
+
+The naive approach — unrolling every board access at compile time — produced a 119 MB BF program. The depth-1 version was optimized down to **943 KB**. The current depth-3 version with alpha-beta pruning is **~5.6 MB**, with the added size coming from the depth-2 and depth-3 search loops (each requiring full state save/restore of 72 cells).
 
 ### Strategy 1: Runtime Loops Instead of Compile-Time Unrolling
 
@@ -81,26 +138,11 @@ e.move_to(COUNTER)
 e.emit(']')
 ```
 
-The loop body reads the piece at the current square index (which increments each iteration), dispatches to the appropriate handler, and stores the first legal move found.
-
 **Impact: 117 MB -> ~1.7 MB** (move generation alone)
 
 ### Strategy 2: Runtime Offset Loops for Piece Movement
 
-Knight and king moves have 8 possible offsets each. Instead of 8 separate calls to `_try_target` (each containing a 64-way board read), use a **single runtime loop** with an N-way dispatch on the offset index:
-
-```python
-# Knight: 8 offsets, single loop
-e.set_cell(OFF_COUNTER, 8)
-e.move_to(OFF_COUNTER)
-e.emit('[')
-_set_dr_df(e, offsets)          # 8-way dispatch: set direction from table
-_try_target(e)                   # single board read + bounds check
-e.inc(OFF_IDX)
-e.dec(OFF_COUNTER)
-e.move_to(OFF_COUNTER)
-e.emit(']')
-```
+Knight and king moves have 8 possible offsets each. Instead of 8 separate calls to `_try_target` (each containing a 64-way board read), use a **single runtime loop** with an N-way dispatch on the offset index.
 
 Similarly, sliding pieces (bishop, rook, queen) use a direction loop (4 directions) with an inner distance loop (up to 7 steps), stopping on occupied squares.
 
@@ -108,13 +150,11 @@ Similarly, sliding pieces (bishop, rook, queen) use a direction loop (4 directio
 
 ### Strategy 3: Cell Proximity
 
-BF pointer movement (`>` and `<`) is O(distance). Moving work cells close to the data they access most often dramatically reduces code size:
+BF pointer movement (`>` and `<`) is O(distance). Moving work cells close to the data they access most often reduces code size:
 
-- **Movegen workspace** (cells 100-119): adjacent to board end (cell 93) and MG temps (94-99)
-- **I/O workspace** (cells 94-99): adjacent to INPUT_BUF (cell 100+)
+- **Legality workspace** (cells 120-129): adjacent to board end (cell 93)
+- **Direct cell access** for castling squares: ~50 bytes vs ~20 KB per `_fast_read_board` call
 - **Batch buffer reads**: read 5 characters in one 128-way pass instead of 5 separate passes
-
-**Impact: 1.74 MB -> 733 KB** (total program)
 
 ### Strategy 4: Efficient Encoding
 
@@ -122,65 +162,91 @@ BF pointer movement (`>` and `<`) is O(distance). Moving work cells close to the
 - `_divmod8` computes file/rank from square index at runtime instead of a 64-way lookup table
 - `output_bestmove` uses divmod to convert square indices to algebraic notation (~10 KB vs ~191 KB)
 
-### Size Breakdown
+## BF Interpreter (`bfi.c`)
 
-| Component | Before | After | Reduction |
-|---|---|---|---|
-| Move generation | 117 MB | 282 KB | 425x |
-| Move parsing | 1.3 MB | 465 KB | 2.9x |
-| bestmove output | 191 KB | 10 KB | 19x |
-| I/O (read_line) | 275 KB | 4 KB | 69x |
-| UCI + misc | 10 KB | 2 KB | 5x |
-| **Total** | **119 MB** | **733 KB** | **166x** |
+The interpreter uses a 3-phase approach for performance:
 
-## Move Evaluation: MVV-LVA + Center Bonus
+1. **RLE compression**: consecutive `><+-` collapsed into single instructions with a count (5.6 MB raw -> ~700K instructions, ~8x compression)
+2. **Jump table**: precomputed bracket pairs on the compressed instruction array for O(1) loop jumps
+3. **Execution**: 64 KB tape, 8-bit wrapping cells
 
-The engine enumerates all legal moves, scores each one, and picks the best:
+This gives roughly 3-5x speedup over naive character-by-character interpretation.
 
-| Move type | Score |
-|---|---|
-| Any legal move (base) | 1 |
-| Capture pawn | +10 |
-| Capture knight/bishop | +30 |
-| Capture rook | +50 |
-| Capture queen | +90 |
-| Move to center (d4/e4/d5/e5) | +3 |
+## Playing
 
-From the starting position, BFChess plays **1. d2d4** (center pawn) rather than the first legal move found.
+### Interactive Play
 
-## Strength Assessment
-
-Tested against Stockfish 18 at minimum strength (Elo 1320, Skill 0, depth 1) over 20 games alternating sides:
-
-```
-Score: +0 =0 -20 / 20 (0%)
-Estimated Elo: ~520
+```bash
+python3 play.py          # Play as white against the engine (displays board)
 ```
 
-The MVV-LVA scoring is a clear improvement over random play (~200 Elo) — the engine captures valuable pieces and prefers center squares — but the lack of any lookahead means it cannot see threats or plan ahead. See [ASSESSMENT.md](ASSESSMENT.md) for full analysis and game records.
+### Automated Testing
+
+```bash
+# Tournament against Stockfish (calibrated Elo, CCRL 40/4 time control)
+python3 play_stockfish.py --elo 1320 --games 10 --both-sides --pgn games.pgn -v
+
+# Tournament against Stockfish (fixed depth, legacy mode)
+python3 play_stockfish.py --depth 1 --games 10 --both-sides --pgn games.pgn -v
+
+# Tournament against random moves (baseline)
+python3 play_random.py --games 10 --both-sides --seed 42 --pgn random.pgn -v
+
+# Automated game (scripted white vs engine)
+python3 auto_play.py
+```
+
+When `--elo` is specified, Stockfish uses `UCI_LimitStrength=true` with a simulated 120+1s game clock (the time control Stockfish's UCI_Elo scale was calibrated against, anchored to CCRL 40/4). BFChess always searches to fixed depth-3 with no time management.
 
 ## Verification
 
-```
-$ python3 generate.py
-Generated chess.bf: 965597 bytes (943.0 KB / 0.90 MB)
-
-$ printf 'uci\nisready\nposition startpos\ngo\nquit\n' | ./bfi chess.bf
-bestmove d2d4
-
-$ python3 test_perft.py   # 7/7 perft positions pass
-```
-
-## Playing Against Stockfish
-
 ```bash
-python3 play_stockfish.py --games 10 --both-sides --elo 1320 --depth 1 --pgn games.pgn -v
+python3 generate.py           # Generate chess.bf (~5.6 MB)
+python3 test_perft.py         # 11/11 perft positions pass
+
+printf 'uci\nisready\nposition startpos\ngo\nquit\n' | ./bfi chess.bf
+# -> bestmove d2d4
 ```
+
+## Strength Assessment
+
+### vs Stockfish 18 (Elo 1320, 120+1s)
+
+Tested with `UCI_LimitStrength=true`, `UCI_Elo=1320` (Stockfish's minimum), using the CCRL 40/4 calibration time control (120s + 1s increment). Stockfish manages its own clock; BFChess has unlimited time (fixed depth-3).
+
+```
+Results: +0 =0 -10 / 10 (0%)
+All 10 losses by checkmate (12-32 moves)
+Estimated BFChess Elo: ~520 (CCRL scale)
+```
+
+Stockfish never used more than half its clock — it comfortably checkmated BFChess every game. BFChess captures material and controls the center, but 3 plies of lookahead is not enough to see tactical threats that Stockfish exploits.
+
+### vs Random
+
+Tested against an engine that plays uniformly random legal moves (baseline).
+
+```
+Results: +4 =6 -0 / 10 (70%)
+4 wins by checkmate, 6 draws by stalemate, 0 losses
+```
+
+BFChess dominates random play in the opening and middlegame, winning all material. However, 60% of games end in stalemate: the engine captures everything and accidentally traps the bare king. The search includes stalemate detection (score 128 = draw at all depths), but stalemate positions that form beyond the 3-ply horizon remain invisible.
+
+### Summary
+
+| Opponent | Score | Win% | BFChess Elo (est.) |
+|----------|-------|------|--------------------|
+| Random (~200 Elo) | +4 =6 -0 | 70% | ~350 |
+| Stockfish 1320 (120+1s) | +0 =0 -10 | 0% | ~520 |
+
+The gap between estimated Elo values reflects the small sample size and the Elo formula's sensitivity at extreme win rates (0% and 70%). A reasonable estimate is **~400-500 Elo** on the CCRL scale.
 
 ## Limitations
 
-- No search tree (single-ply greedy evaluation only)
-- No castling, en passant in move generation
-- Queen-only promotion (no underpromotion)
-- No king safety, pawn structure, or positional evaluation
-- No time management
+- No iterative deepening or time management (fixed depth-3)
+- Queen-only promotion in search (recognizes opponent underpromotions via `domove`)
+- No opening book or endgame tablebase
+- No king safety, pawn structure, or piece-square tables beyond simple center bonuses
+- Move time: 45-600+ seconds per move depending on position complexity
+- Stalemate blindness beyond the search horizon (major issue vs weak opponents)
