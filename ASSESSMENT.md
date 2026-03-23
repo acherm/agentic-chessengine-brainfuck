@@ -75,7 +75,6 @@ The opponent plays uniformly random legal moves. This establishes a floor — an
 ```
 Results: +0 =0 -10 / 10 (0%)
 All 10 losses by checkmate
-Estimated BFChess Elo: ~520 (CCRL scale)
 ```
 
 | Game | BF side | Moves | BF time | SF time | Termination |
@@ -147,23 +146,14 @@ BFChess loses the exchange (Qxg2, Qxh1 — Stockfish grabs both rooks). After qu
 
 BFChess trades the queen early for material (Qxg7 + Bxh6), pushes the d-pawn to promotion, and checkmates with cxd8=Q#. The MVV-LVA evaluation correctly prioritizes captures and pawn advancement.
 
-## Elo Estimate
+## Strength Summary
 
-Using the standard formula: `Elo_diff = -400 * log10(1/score_pct - 1)`
+The sample sizes are small (10 games each) and the win rates extreme (0% and 70%), so a precise Elo estimate is not meaningful. What the results show:
 
-| Opponent | Score | Elo diff | BFChess Elo (est.) |
-|----------|-------|----------|-------------------|
-| Random (~200 Elo) | 70% | +147 | ~350 |
-| Stockfish 1320 (120+1s) | 0% | -800 (capped) | ~520 |
+- BFChess is **clearly stronger than random play**: it captures material, controls the center, and checkmates a random opponent 40% of the time (with another 60% drawn by stalemate).
+- BFChess is **clearly weaker than even the weakest Stockfish**: 0/10, all losses by checkmate in 12-32 moves.
 
-The gap between estimates reflects small sample size and the Elo formula's sensitivity at extreme win rates. A reasonable estimate is **~400-500 Elo** on the CCRL scale.
-
-For context:
-- Random legal moves: ~200 Elo
-- Simple 1-ply MVV-LVA (no search): ~400-600 Elo
-- Depth 4-5 with alpha-beta: ~1200-1500 Elo
-
-BFChess at depth-3 with alpha-beta sits at the low end of this range. The engine captures valuable pieces, controls the center, detects checks, and avoids losing exchanges — but 3 plies of lookahead is not enough to see tactical threats that even minimum-strength Stockfish exploits.
+The engine captures valuable pieces, controls the center, detects checks, and avoids losing exchanges — but 3 plies of lookahead is not enough to see tactical threats that even minimum-strength Stockfish exploits.
 
 ### Key Weaknesses Observed
 

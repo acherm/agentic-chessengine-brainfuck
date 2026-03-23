@@ -210,14 +210,13 @@ printf 'uci\nisready\nposition startpos\ngo\nquit\n' | ./bfi chess.bf
 
 ## Strength Assessment
 
-### vs Stockfish 18 (Elo 1320, 120+1s)
+### vs Stockfish 18 (minimum settings, 120+1s)
 
 Tested with `UCI_LimitStrength=true`, `UCI_Elo=1320` (Stockfish's minimum), using the CCRL 40/4 calibration time control (120s + 1s increment). Stockfish manages its own clock; BFChess has unlimited time (fixed depth-3).
 
 ```
 Results: +0 =0 -10 / 10 (0%)
 All 10 losses by checkmate (12-32 moves)
-Estimated BFChess Elo: ~520 (CCRL scale)
 ```
 
 Stockfish never used more than half its clock — it comfortably checkmated BFChess every game. BFChess captures material and controls the center, but 3 plies of lookahead is not enough to see tactical threats that Stockfish exploits.
@@ -235,12 +234,12 @@ BFChess dominates random play in the opening and middlegame, winning all materia
 
 ### Summary
 
-| Opponent | Score | Win% | BFChess Elo (est.) |
-|----------|-------|------|--------------------|
-| Random (~200 Elo) | +4 =6 -0 | 70% | ~350 |
-| Stockfish 1320 (120+1s) | +0 =0 -10 | 0% | ~520 |
+| Opponent | Score | Win% |
+|----------|-------|------|
+| Random legal moves | +4 =6 -0 | 70% |
+| Stockfish (minimum settings) | +0 =0 -10 | 0% |
 
-The gap between estimated Elo values reflects the small sample size and the Elo formula's sensitivity at extreme win rates (0% and 70%). A reasonable estimate is **~400-500 Elo** on the CCRL scale.
+The sample sizes are small (10 games each) and the win rates extreme (0% and 70%), so a precise Elo estimate is not meaningful. BFChess is clearly stronger than random play but clearly weaker than even the weakest Stockfish configuration.
 
 ## Limitations
 
