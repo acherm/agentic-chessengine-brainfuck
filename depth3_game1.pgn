@@ -1,0 +1,10 @@
+[Event "BFChess vs Stockfish"]
+[Site "Local"]
+[Date "2026.02.25"]
+[Round "1"]
+[White "BFChess (MVV-LVA)"]
+[Black "Stockfish 18 (skill 0, Elo 1320, depth 1)"]
+[Result "0-1"]
+
+1. d4 Nf6 2. e4 c5 3. d5 g6 4. d6 exd6 5. c3 d5 6. Qxd5 Nxd5 7. Bc4 Nf4 8. Bxf7+ Ke7 9. Kd1 Ne6 10. e5 g5 11. Nh3 d5 12. Be3 Bg7 13. Bxe6 h6 14. Bxc5+ Kxe6 15. Bxa7 Bf8 16. Bxb8 Kf7 17. e6+ Kf6 18. Be5+ Ke7 19. Nf4 gxf4 20. Bxh8 Qd6 21. g3 Qa6 22. Bf6+ Kd6 23. Be5+ Kxe5 24. f3 Kf5 25. Rg1 fxg3 26. a3 Bd6 27. e7 Bd7 28. b3 d4 29. Nd2 Bxe7 30. Ne4 Rg8 31. Nxg3+ Rxg3 32. Kc1 Rxg1+ 33. Kd2 Rd1+ 34. Rxd1 Bg5+ 35. f4 Bxf4+ 36. Ke1 Be8 37. Kf2 b5 38. Rxd4 h5 39. Rd7 Bxd7 40. c4 Qa7+ 41. Kf3 Bc6+ 42. Ke2 Bf3+ 43. Kxf3 Qa8+ 44. Kf2 Qa7+ 45. Kf3 Qb7+ 46. Kf2 Qb6+ 47. Kf3 Qc6+ 48. Kf2 Bg3+ 49. hxg3 Kg4 50. c5 Qf3+ 51. Kg1 Qe3+ 52. Kf1 Kxg3 53. a4 Qf2# 0-1
+

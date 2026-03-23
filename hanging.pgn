@@ -1,0 +1,100 @@
+[Event "BFChess vs Stockfish"]
+[Site "Local"]
+[Date "2026.02.23"]
+[Round "1"]
+[White "BFChess (MVV-LVA)"]
+[Black "Stockfish 18 (skill 0, Elo 1320, depth 1)"]
+[Result "0-1"]
+
+1. Nc3 e6 2. Nf3 a6 3. d4 b5 4. Nxb5 c6 5. Be3 axb5 6. Ne5 Ne7 7. Nxc6 Nbxc6 8. Qd3 Ra7 9. O-O-O h5 10. Qxb5 Qc7 11. Qxc6 dxc6 12. Rd3 Nd5 13. c4 Rh6 14. Bxh6 Qb8 15. cxd5 Rxa2 16. dxc6 Ra1+ 17. Kc2 gxh6 18. e4 Ra7 19. Kc1 Qf4+ 20. Kb1 Bb4 21. Be2 h4 22. Kc2 Ke7 23. Rg1 Qb8 24. Rf1 Qc7 25. Rfd1 e5 26. dxe5 Qxe5 27. Bf3 Qc5+ 28. Kb1 Qe5 29. Re3 f6 30. Red3 Ba5 31. Re3 Bb4 32. Red3 Bd6 33. Rxd6 Be6 34. Rxe6+ Qxe6 35. Kc1 Ra1+ 36. Kc2 Qxc6+ 37. Kd3 Ra5 38. Kd4 Qa4+ 39. Kc3 f5 40. exf5 Re5 41. h3 Qa5+ 42. Kd4 Qc5+ 43. Kd3 Qb4 44. Bc6 Kf6 45. f3 Qd6+ 46. Kc3 Rc5+ 47. Kb3 Qg3 48. Be4 Qb8+ 49. Ka2 Qg8+ 50. Ka1 Qb8 51. Bd3 Qb4 52. Bb1 Qa4+ 53. Ba2 Qxd1+ 54. Bb1 Ra5# 0-1
+
+[Event "BFChess vs Stockfish"]
+[Site "Local"]
+[Date "2026.02.23"]
+[Round "2"]
+[White "Stockfish 18 (skill 0, Elo 1320, depth 1)"]
+[Black "BFChess (MVV-LVA)"]
+[Result "1-0"]
+
+1. c3 Nc6 2. d4 Nxd4 3. Qxd4 c6 4. Qd2 Nf6 5. Qd1 Ne4 6. Nd2 Nxd2 7. Bxd2 d5 8. c4 dxc4 9. Nf3 Qxd2+ 10. Kxd2 Be6 11. Ke3 c5 12. h4 Bf5 13. Qe1 O-O-O 14. Rd1 Rxd1 15. Qxd1 Be6 16. Qe1 Bd5 17. Qb1 Bxf3 18. Kxf3 e5 19. Qf5+ Kc7 20. Qxe5+ Kc6 21. Qe4+ Kd6 22. g4 f6 23. Bg2 a6 24. Qb1 Be7 25. Qa1 Kd5 26. Rd1+ Ke5 27. b4+ Ke6 28. a3 cxb4 29. g5 bxa3 30. h5 fxg5 31. Bh3+ g4+ 32. Bxg4+ Kf7 33. Rd7 Kg8 34. Rxe7 Kf8 35. Qxg7# 1-0
+
+[Event "BFChess vs Stockfish"]
+[Site "Local"]
+[Date "2026.02.23"]
+[Round "3"]
+[White "BFChess (MVV-LVA)"]
+[Black "Stockfish 18 (skill 0, Elo 1320, depth 1)"]
+[Result "0-1"]
+
+1. Nc3 e5 2. Nf3 d6 3. Nxe5 Be7 4. Nxf7 Kxf7 5. d4 d5 6. Nxd5 Qxd5 7. Be3 Nf6 8. Qd3 Bf5 9. Qxf5 Qxf5 10. O-O-O Ke8 11. c3 Qg6 12. f3 Kd8 13. c4 Qh5 14. Rd3 a5 15. Rc3 Nbd7 16. Rd3 Ra7 17. Rc3 Ra8 18. Rd3 Qf7 19. Rc3 g6 20. Rd3 Rg8 21. Rc3 h5 22. Rd3 Qe8 23. Rc3 h4 24. Rd3 Rb8 25. Rc3 c6 26. Rd3 Qf7 27. Rc3 Qe8 28. Rd3 a4 29. Rc3 Ra8 30. Rd3 b6 31. Rc3 b5 32. cxb5 Nd5 33. bxc6 Bd6 34. cxd7 Qe7 35. Rc4 Nc7 36. Rxc7 a3 37. bxa3 Rf8 38. d5 Bxa3+ 39. Kb1 Qb4+ 40. Ka1 Qb2# 0-1
+
+[Event "BFChess vs Stockfish"]
+[Site "Local"]
+[Date "2026.02.23"]
+[Round "4"]
+[White "Stockfish 18 (skill 0, Elo 1320, depth 1)"]
+[Black "BFChess (MVV-LVA)"]
+[Result "1-0"]
+
+1. c3 Nc6 2. Nf3 Nf6 3. a4 Ne4 4. b4 Nxc3 5. dxc3 Nxb4 6. cxb4 c6 7. Ra2 e6 8. Nbd2 Bxb4 9. e3 Bxd2+ 10. Qxd2 O-O 11. Rb2 Re8 12. Be2 c5 13. h4 Qxh4 14. Rxh4 f6 15. Bf1 f5 16. Rb1 Kf7 17. Ng5+ Kg8 18. Nf3 Kf7 19. Ne5+ Kg8 20. Bb2 Kf8 21. Nf3 Kg8 22. a5 1-0
+
+[Event "BFChess vs Stockfish"]
+[Site "Local"]
+[Date "2026.02.23"]
+[Round "5"]
+[White "BFChess (MVV-LVA)"]
+[Black "Stockfish 18 (skill 0, Elo 1320, depth 1)"]
+[Result "0-1"]
+
+1. Nc3 d5 2. Nxd5 Qxd5 3. c3 Bd7 4. e3 Nc6 5. Be2 h5 6. Bxh5 Qxg2 7. Bxf7+ Kd8 8. Bxg8 Qxh1 9. Bc4 Ke8 10. d3 Qxg1+ 11. Kd2 Qxd1+ 12. Kxd1 Ne5 13. d4 Nf7 14. Bxf7+ Kd8 15. e4 Be8 16. Bxe8 Kxe8 17. Be3 e5 18. dxe5 Rd8+ 0-1
+
+[Event "BFChess vs Stockfish"]
+[Site "Local"]
+[Date "2026.02.23"]
+[Round "6"]
+[White "Stockfish 18 (skill 0, Elo 1320, depth 1)"]
+[Black "BFChess (MVV-LVA)"]
+[Result "1-0"]
+
+1. Nc3 Nc6 2. e3 Nf6 3. Nf3 d6 4. Be2 Be6 5. d4 Nxd4 6. Qxd4 Bxa2 7. Rxa2 c6 8. Qd2 c5 9. Bb5+ Nd7 10. Kd1 e6 11. e4 Be7 12. Ra1 O-O 13. Be2 Re8 14. g3 Nf6 15. Re1 Nxe4 16. Qe3 Nxc3+ 17. Qxc3 d5 18. Qd2 Bd6 19. h3 Bxg3 20. Qg5 Qxg5 21. Nxg5 Bxf2 22. Bb5 Bxe1 23. Bxe8 Rxe8 24. Nxf7 Kxf7 25. Rxa7 Kg8 26. Kxe1 d4 27. Ke2 e5 28. Rxb7 e4 29. Rd7 Re5 30. Rd8+ Kf7 31. Rd7+ Kg8 32. Rd8+ Kf7 33. Bf4 c4 34. Rf8+ Kxf8 35. Bxe5 Kg8 36. Bxd4 1-0
+
+[Event "BFChess vs Stockfish"]
+[Site "Local"]
+[Date "2026.02.23"]
+[Round "7"]
+[White "BFChess (MVV-LVA)"]
+[Black "Stockfish 18 (skill 0, Elo 1320, depth 1)"]
+[Result "0-1"]
+
+1. Nc3 Nf6 2. Nf3 e6 3. d4 Be7 4. Be3 O-O 5. Ne5 c6 6. Nxc6 Nxc6 7. Qd3 Nb4 8. O-O-O a6 9. Qxa6 bxa6 10. f3 Bb7 11. Bf4 Re8 12. Be5 Nxa2+ 13. Nxa2 Rc8 14. Bxf6 Rxc2+ 15. Kxc2 Bxf6 16. Kc1 Qc8+ 17. Kb1 Kh8 18. e3 Qb8 19. Kc1 Rc8+ 20. Kb1 h5 21. Bxa6 Qa7 22. Bxb7 Qxb7 23. f4 Qe4+ 24. Ka1 Qa8 25. Rhg1 d5 26. Rgf1 Rf8 27. Rf3 Re8 28. b3 Rd8 29. g3 Rf8 30. h3 Be7 31. Rf2 Qb8 32. Nc3 Qa8+ 33. Kb1 Bf6 34. Kc1 Rd8 35. Nxd5 Qc8+ 36. Kb1 Qb8 37. Nxf6 Qxb3+ 38. Kc1 gxf6 39. e4 Qa3+ 40. Kb1 Qa7 41. Kc1 Rc8+ 42. Kb1 Qb7+ 43. Ka1 Qa8+ 44. Kb1 Qxe4+ 45. Ka1 Qb7 46. Rff1 Ra8# 0-1
+
+[Event "BFChess vs Stockfish"]
+[Site "Local"]
+[Date "2026.02.23"]
+[Round "8"]
+[White "Stockfish 18 (skill 0, Elo 1320, depth 1)"]
+[Black "BFChess (MVV-LVA)"]
+[Result "1-0"]
+
+1. e4 Nc6 2. d4 Nxd4 3. Qxd4 c6 4. Nc3 e6 5. Be3 Be7 6. h3 a5 7. e5 f5 8. a3 Bxa3 9. bxa3 Ne7 10. Nb5 cxb5 11. Rd1 O-O 12. Be2 Rf7 13. Nf3 Nc6 14. Qb6 Qxb6 15. Bxb6 Nxe5 16. Nxe5 f4 17. Bd4 d5 18. O-O Rf6 19. Nd3 Bd7 20. Bxf6 gxf6 21. Kh2 d4 22. Rh1 f5 23. Rde1 Bc6 24. Bf3 Bxf3 25. gxf3 Kf7 26. Ne5+ Kg8 27. Nd3 Kf7 28. Ne5+ Kg8 29. Rd1 Kg7 30. Rhe1 Kg8 31. Rg1+ Kf8 32. Rge1 Kg8 33. Rg1+ 1-0
+
+[Event "BFChess vs Stockfish"]
+[Site "Local"]
+[Date "2026.02.23"]
+[Round "9"]
+[White "BFChess (MVV-LVA)"]
+[Black "Stockfish 18 (skill 0, Elo 1320, depth 1)"]
+[Result "0-1"]
+
+1. Nc3 e6 2. Nf3 Be7 3. d4 c6 4. Be3 Qc7 5. Ne4 Qa5+ 6. Qd2 Bb4 7. Qxb4 Qxb4+ 8. Kd1 Qf8 9. Kc1 b5 10. Ne5 Ba6 11. Nxc6 f6 12. Nxb8 Rxb8 13. Nxf6+ Qxf6 14. c3 Rb7 15. Rg1 h5 16. Rh1 Qf8 17. Rg1 Qf6 18. Rh1 h4 19. Rg1 Kf7 20. Rh1 Rh6 21. Bxh6 Nxh6 22. e4 Qg5+ 0-1
+
+[Event "BFChess vs Stockfish"]
+[Site "Local"]
+[Date "2026.02.23"]
+[Round "10"]
+[White "Stockfish 18 (skill 0, Elo 1320, depth 1)"]
+[Black "BFChess (MVV-LVA)"]
+[Result "1-0"]
+
+1. e4 Nc6 2. c3 Nf6 3. Bd3 Nxe4 4. Bxe4 Ne5 5. d4 Nc4 6. Ne2 Nxb2 7. Bxb2 d6 8. Bc2 Be6 9. Bc1 Bxa2 10. Rxa2 d5 11. Na3 c6 12. h4 e6 13. g3 Bxa3 14. Rxa3 O-O 15. Rg1 Qxh4 16. Qd3 Qxd4 17. Qxh7# 1-0
+
