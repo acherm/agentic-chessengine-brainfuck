@@ -250,3 +250,7 @@ The gap between estimated Elo values reflects the small sample size and the Elo 
 - No king safety, pawn structure, or piece-square tables beyond simple center bonuses
 - Move time: 45-600+ seconds per move depending on position complexity
 - Stalemate blindness beyond the search horizon (major issue vs weak opponents)
+
+## Authors
+
+Developed by [Mathieu Acher](https://github.com/acherm) and [Claude Code](https://claude.ai/claude-code) (Opus 4.6).
